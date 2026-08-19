@@ -35,6 +35,46 @@ Quem tem site proprio normalmente e marca concorrente, nao afiliado.
 **Fila de DM limitada a 30.**
 Fila infinita nao e trabalhada. 30 e o que uma pessoa faz em duas horas.
 
+**O kit e escolhido pelo criador no formulario. O pool nao adivinha.**
+Decidido em 19/08/2026. O classificador deriva trilha de uma string de bio —
+isso serve para triagem, nao para decidir o que vai dentro de uma caixa com
+frete pago. Quem conhece a audiencia e o criador.
+
+A cadeia fica:
+
+```
+criador escolhe o kit no formulario  (lista aprovada no frete)
+        v
+marca deriva do kit                  (tabela fixa, nao inferencia)
+        v
+W1 passo 3 e 4 passam
+```
+
+Tres consequencias:
+
+1. **Nao existe tabela `trilha -> kit` no Supabase, e nao deve existir.**
+   Seria uma camada de adivinhacao no meio do caminho.
+2. **`kit_alocado` e `marca_alocada` estao com `ativo = false` em
+   `ghl_campos`**, para o sync nunca competir com o que o criador escolheu.
+3. **A marca nunca foi problema de inferencia.** `Juta Oval` *e* produto Teak
+   Brazil: isso e dado. O W9 deriva com um `If/Else` por kit, no mesmo formato
+   do passo 5 que ja existe por marca.
+
+O ganho secundario e o que mais importa a jusante: quem escolheu o kit tem
+pele no jogo. A taxa de video entregue de quem pediu o produto e outra em
+relacao a quem recebeu o que alguem achou que combinava — e e exatamente esse
+o problema que o W3 existe para cobrar.
+
+**Requisito que vem com a decisao:** `Afiliado — Kit alocado` esta como TEXT.
+Precisa virar `SINGLE_OPTIONS`, senao o `contains` do W1 passo 4 quebra com um
+espaco a mais ou uma caixa diferente. E se toda opcao da lista for
+margem-segura, a escolha do criador nao pode custar dinheiro — o que transforma
+a pendencia do frete: ela deixa de bloquear o sistema e passa a definir so o
+conteudo de um dropdown.
+
+**Excecao:** `key_account` normalmente nao preenche formulario. Amostra para
+key account e decisao de pessoa, com cache, e o kit e combinado na conversa.
+
 ## Colisoes entre workflows do GHL
 
 Tres pontos onde um workflow dispara outro sem ninguem mandar. Estao detalhadas
@@ -60,13 +100,13 @@ Revisado em 19/08/2026 contra o estado real do GHL — ver `ghl-inventario.md`.
 | 1 | **W7 esta publicado com frete nao medido** | nenhum e-mail saiu ainda (0 contatos entraram, pipeline vazio), mas dispara no primeiro sync real | aberta |
 | 2 | Campo `Bairro` nao existe no GHL | W1 e W9 nao validam endereco; Sankhya nao emite nota | aberta, confirmada |
 | 3 | Chaves de merge field | `afiliado__marca_alocada` e `afiliado__codigo_de_rastreio` **confirmadas**; `bairro` nao existe | resolvida em 2 de 3 |
-| 4 | Lista de kits aprovados nao fechada | W1 passo 4 | aberta |
+| 4 | Lista de kits aprovados nao fechada | agora bloqueia so as opcoes do dropdown do formulario, nao o fluxo | aberta, despriorizada |
 | 5 | Sincronizacao Supabase -> GHL | — | **feita e testada com write real**: `ghl-sync` |
 | 6 | GMV nao volta do Sankhya/Shopify | W6 nunca dispara sozinho | aberta |
 | 7 | Pesos do classificador sem calibracao | qualidade de tudo a jusante | aberta |
 | 8 | **W0 nao existe** | a porta de entrada da importacao | contornada pelo `ghl-sync`, que ja cria contato e card |
 | 9 | **W4 nao existe** | a trava de reenvio | aberta, ver aviso abaixo |
-| 10 | **Nada aloca kit nem marca** | `kit_alocado` e `marca_alocada` sao null nos 97 criadores. Sem marca o W9 aplica `afil-sem-marca` e o W1 barra a amostra | aberta |
+| 10 | Kit e marca vazios | resolvido por decisao: kit vem do formulario, marca deriva do kit. Falta so o campo virar `SINGLE_OPTIONS` e entrar no formulario | encaminhada |
 | 11 | Cinco tags do guia nao existem no GHL | `afil-devolvido` `afil-conteudo-combinado` `afil-revendedor` `afil-cadastro-incompleto` `afil-teste`. A `afil-import` passou a existir no teste do sync | aberta |
 
 Nenhuma pendencia esta causando dano agora: o pipeline de afiliados esta
@@ -75,7 +115,6 @@ travas que ja existem foram verificadas e funcionam — ver a secao do W2 em
 `ghl-inventario.md`.
 
 Pendencia 1 e a que cria dano no minuto do primeiro sync real.
-Pendencia 10 e a que trava a jornada no meio, depois do aceite.
 Pendencia 9 e a que cria dano na primeira amostra extraviada.
 
 **Aviso sobre o W4:** o guia manda construir o W4 antes do W2b. Hoje o W2b
