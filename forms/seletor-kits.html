@@ -1,0 +1,663 @@
+<title>Kits para Criadores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Karla:wght@400;500;700&display=swap">
+
+<!--
+  ============================================================
+  SELETOR DE KITS — bloco de HTML customizado para o formulario
+  de cadastro de afiliado no GoHighLevel.
+
+  COMO USAR
+  1. No formulario, adicione os campos reais:
+       Afiliado — Kit alocado     (SINGLE_OPTIONS)
+       Afiliado — Marca alocada   (SINGLE_OPTIONS)
+     As opcoes do Kit alocado tem que ser IGUAIS aos `valor` da
+     lista KITS abaixo: "KIT CAFÉ", "KIT JUTA OVAL", etc.
+  2. Adicione um elemento Custom HTML / Custom Code e cole este
+     arquivo inteiro dentro dele.
+  3. Publique e abra o formulario. Clique num kit e confira no
+     GHL se o campo gravou.
+
+  SE NAO GRAVAR: troque DEBUG para true e abra o formulario de
+  novo. Vai aparecer um painel dizendo exatamente o que ele
+  encontrou no DOM. Me manda o print desse painel.
+
+  PARA ESCONDER UM KIT: `ativo: false` na lista. Nada mais.
+  PARA POR FOTO: preencha `foto` com a URL da imagem.
+  ============================================================
+-->
+
+<div id="nk-seletor" data-vazio="true">
+<style>
+#nk-seletor{
+  /* Paleta tirada das cores dos proprios produtos: natural, preto,
+     branco, e a teca como unico acento. */
+  --papel:#F7F7F4; --superficie:#FFFFFF; --fibra:#EDEAE1;
+  --tinta:#1C1B18; --tinta-2:#5F5B51; --tinta-3:#8A857A;
+  --teca:#A0642B; --mata:#2F5D4A; --borda:#DEDAD0;
+  --sombra:0 1px 2px rgba(28,27,24,.05), 0 8px 24px -12px rgba(28,27,24,.12);
+  --r:14px;
+
+  font-family:Karla,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--tinta); background:var(--papel);
+  padding:clamp(20px,4vw,40px) clamp(16px,3vw,28px);
+  border-radius:var(--r); container-type:inline-size;
+  -webkit-font-smoothing:antialiased;
+}
+@media (prefers-color-scheme:dark){
+  #nk-seletor:not([data-tema="claro"]){
+    --papel:#141412; --superficie:#1E1E1B; --fibra:#2A2A26;
+    --tinta:#F2F0EA; --tinta-2:#B4AFA3; --tinta-3:#8A857A;
+    --teca:#D08F4A; --mata:#5C9C7D; --borda:#33322D;
+    --sombra:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+}
+#nk-seletor[data-tema="escuro"]{
+  --papel:#141412; --superficie:#1E1E1B; --fibra:#2A2A26;
+  --tinta:#F2F0EA; --tinta-2:#B4AFA3; --tinta-3:#8A857A;
+  --teca:#D08F4A; --mata:#5C9C7D; --borda:#33322D;
+  --sombra:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+}
+
+#nk-seletor *{box-sizing:border-box;margin:0}
+
+/* Quando o seletor E a pagina inteira (previa fora do GHL), ele preenche a
+   viewport com o proprio fundo. Dentro do formulario o seletor esta aninhado
+   fundo na arvore, entao `body >` nunca casa e nada disto vaza para la. */
+body:has(> #nk-seletor){margin:0}
+body > #nk-seletor{min-height:100vh;border-radius:0}
+
+.nk-topo{max-width:62ch;display:flex;flex-direction:column;gap:8px;margin-bottom:clamp(22px,3vw,32px)}
+.nk-olho{
+  font:500 11px/1 Karla,sans-serif; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--teca);
+}
+.nk-titulo{
+  font-family:"Bricolage Grotesque",Karla,sans-serif; font-weight:700;
+  font-size:clamp(24px,4.2cqw,34px); line-height:1.08; letter-spacing:-.02em;
+  text-wrap:balance;
+}
+.nk-sub{font-size:15px;line-height:1.55;color:var(--tinta-2)}
+
+.nk-grupo{margin-bottom:clamp(26px,3.5vw,38px)}
+.nk-grupo-nome{
+  font:500 11px/1 Karla,sans-serif; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--tinta-3); display:flex; align-items:center; gap:12px; margin-bottom:14px;
+}
+.nk-grupo-nome::after{content:"";flex:1;height:1px;background:var(--borda)}
+
+.nk-grade{display:grid;gap:14px;grid-template-columns:1fr}
+@container (min-width:520px){.nk-grade{grid-template-columns:repeat(2,1fr)}}
+@container (min-width:820px){.nk-grade{grid-template-columns:repeat(3,1fr)}}
+
+.nk-card{position:relative;display:block;cursor:pointer}
+.nk-card input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+
+.nk-corpo{
+  height:100%; display:flex; flex-direction:column;
+  background:var(--superficie); border:1.5px solid var(--borda);
+  border-radius:var(--r); overflow:hidden;
+  transition:border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+.nk-card:hover .nk-corpo{border-color:var(--tinta-3);box-shadow:var(--sombra)}
+.nk-card input:focus-visible + .nk-corpo{outline:2px solid var(--teca);outline-offset:2px}
+.nk-card input:checked + .nk-corpo{
+  border-color:var(--mata); box-shadow:0 0 0 1.5px var(--mata), var(--sombra);
+}
+
+.nk-foto{
+  aspect-ratio:4/3; background:var(--fibra); position:relative; overflow:hidden;
+  display:grid; place-items:center;
+}
+.nk-foto img{width:100%;height:100%;object-fit:cover;display:block}
+/* Sem foto: bloco tramado, que parece intencional em vez de quebrado */
+.nk-sem-foto{
+  width:100%;height:100%;display:grid;place-items:center;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 7px,rgba(160,100,43,.07) 7px 8px),
+    repeating-linear-gradient(0deg,transparent 0 7px,rgba(160,100,43,.07) 7px 8px),
+    var(--fibra);
+}
+.nk-sem-foto span{
+  font-family:"Bricolage Grotesque",Karla,sans-serif;font-weight:700;
+  font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-3);
+  text-align:center;padding:0 16px;line-height:1.3;
+}
+
+.nk-marca{
+  position:absolute;top:10px;left:10px;
+  font:700 10px/1 Karla,sans-serif;letter-spacing:.07em;text-transform:uppercase;
+  padding:5px 8px;border-radius:999px;
+  background:var(--superficie);color:var(--tinta-2);border:1px solid var(--borda);
+}
+.nk-check{
+  position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;
+  background:var(--mata);display:grid;place-items:center;
+  opacity:0;transform:scale(.7);transition:opacity .16s ease,transform .16s ease;
+}
+.nk-card input:checked + .nk-corpo .nk-check{opacity:1;transform:scale(1)}
+.nk-check svg{width:14px;height:14px;stroke:#fff;stroke-width:2.5;fill:none}
+
+.nk-info{padding:14px 15px 16px;display:flex;flex-direction:column;gap:9px;flex:1}
+.nk-nome{
+  font-family:"Bricolage Grotesque",Karla,sans-serif;font-weight:700;
+  font-size:17px;line-height:1.15;letter-spacing:-.01em;
+}
+.nk-itens{list-style:none;display:flex;flex-direction:column;gap:4px;padding:0}
+.nk-itens li{
+  font-size:13px;line-height:1.4;color:var(--tinta-2);
+  padding-left:13px;position:relative;
+}
+.nk-itens li::before{
+  content:"";position:absolute;left:0;top:.55em;
+  width:5px;height:5px;border-radius:50%;background:var(--teca);opacity:.55;
+}
+
+.nk-barra{
+  position:sticky;bottom:0;z-index:5;margin-top:6px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:14px 16px;border-radius:var(--r);
+  background:var(--superficie);border:1.5px solid var(--borda);box-shadow:var(--sombra);
+}
+.nk-barra[data-escolhido="true"]{border-color:var(--mata)}
+.nk-barra-rotulo{font:500 11px/1 Karla,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-3)}
+.nk-barra-valor{
+  font-family:"Bricolage Grotesque",Karla,sans-serif;font-weight:700;font-size:17px;
+  line-height:1.2;
+}
+.nk-barra[data-escolhido="false"] .nk-barra-valor{color:var(--tinta-3);font-weight:500}
+
+.nk-aviso{
+  margin-top:14px;padding:12px 14px;border-radius:10px;
+  background:var(--fibra);border:1px solid var(--borda);
+  font-size:13px;line-height:1.5;color:var(--tinta-2);
+}
+.nk-aviso code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+  background:var(--superficie);padding:1px 5px;border-radius:4px;border:1px solid var(--borda);
+}
+.nk-aviso b{color:var(--tinta)}
+.nk-oculto{display:none}
+
+@media (prefers-reduced-motion:reduce){
+  #nk-seletor *{transition:none!important}
+}
+</style>
+
+<div class="nk-topo">
+  <p class="nk-olho">Programa de afiliados</p>
+  <h2 class="nk-titulo">Escolha o kit que combina com o seu conteúdo</h2>
+  <p class="nk-sub">
+    Você recebe um kit para gravar. Escolha o que faz mais sentido para a sua
+    audiência &mdash; quem conhece ela é você, não a gente.
+  </p>
+</div>
+
+<div id="nk-grupos"></div>
+
+<div class="nk-barra" id="nk-barra" data-escolhido="false">
+  <span class="nk-barra-rotulo">Seu kit</span>
+  <span class="nk-barra-valor" id="nk-barra-valor">Nenhum selecionado ainda</span>
+</div>
+
+<div class="nk-aviso nk-oculto" id="nk-aviso"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ====== CONFIGURACAO ====== */
+
+  // Troque para true se o campo nao estiver gravando. Mostra um painel
+  // com tudo o que o script encontrou no DOM.
+  var DEBUG = false;
+
+  // Esconde o campo original do GHL depois de encontra-lo, para o criador
+  // nao ver um dropdown duplicado. So sobe na arvore enquanto o ancestral
+  // contiver apenas aquele campo, entao nao corre o risco de esconder
+  // meio formulario.
+  var ESCONDER_ORIGINAL = true;
+
+  // Pedacos da chave dos campos customizados no GHL.
+  var CAMPOS = {
+    kit:   "afiliado__kit_alocado",
+    marca: "afiliado__marca_alocada"
+  };
+
+  /* ====== OS KITS ======
+     `valor` e o que vai gravado no campo. Tem que bater EXATAMENTE com a
+     opcao cadastrada na picklist do GHL.
+     `ativo: false` tira o kit do formulario sem apagar nada.
+     `foto` vazio mostra um bloco tramado com o nome. */
+  var KITS = [
+  {
+    nome: "Café",
+    valor: "KIT CAFÉ",
+    sku: "902.K01.M00",
+    marca: "Teak Brazil",
+    grupo: "mesa",
+    itens: ["Boleira Teca Com Acrilico", "Quejeira Teca Com Acrilico"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Juta Retangular",
+    valor: "KIT JUTA RETANGULAR",
+    sku: "903.K01.003",
+    marca: "Teak Brazil",
+    grupo: "mesa",
+    itens: ["Caixa Juta Alongada Com Tampa 1,5L", "Caixa Juta Alongada Com Tampa 3,7L", "Caixa Juta Alongada Com Tampa 7,4L"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Juta Oval",
+    valor: "KIT JUTA OVAL",
+    sku: "904.K01.003",
+    marca: "Teak Brazil",
+    grupo: "mesa",
+    itens: ["Caixa Juta Europa Com Tampa Teca 10,8L", "Caixa Juta Europa Com Tampa Teca 18,7L"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Churrasco",
+    valor: "KIT CHURRASCO",
+    sku: "905.K01.999",
+    marca: "Teak Brazil",
+    grupo: "mesa",
+    itens: ["Tabua De Corte Madeira Teca Com Gaveta", "Petisqueira Teca Com 3 Molheiras"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Ferramenta",
+    valor: "KIT FERRAMENTA",
+    sku: "906.K01.999",
+    marca: "Nitron",
+    grupo: "casa",
+    itens: ["Organiza Tudo Com Divisória Móveis", "Caixa De Ferramentas Nitronfort 16\""],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Make",
+    valor: "KIT MAKE",
+    sku: "907.K01.001",
+    marca: "Mundo UD",
+    grupo: "casa",
+    itens: ["Organizador De Pincéis E Acessórios", "Organizador De Cosméticos E Bijou", "Frasqueira Com Bandeja"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Guarda-Roupa",
+    valor: "KIT GUARDA-ROUPA",
+    sku: "908.K01.001",
+    marca: "Mundo UD",
+    grupo: "casa",
+    itens: ["Cabide P Com 3Peças", "Cabide Still Com 3 Peças"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Travessa Canelada Oval",
+    valor: "KIT TRAVESSA CANELADA OVAL",
+    sku: "909.K01.002",
+    marca: "Mundo UD",
+    grupo: "mesa",
+    itens: ["Travessa Oval Canelada Com Tampa 650Ml", "Travessa Oval Canelada Com Tampa 1,2L", "Travessa Oval Canelada Com Tampa 2,5L"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "UltraForte",
+    valor: "KIT ULTRAFORTE",
+    sku: "910.K01.002",
+    marca: "Mundo UD",
+    grupo: "cozinha",
+    itens: ["Pote Ultraforte Com Travas 2,1L", "Pote Ultraforte Com Travas 4L", "Pote Ultraforte Com Travas 6,9L"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Lavanderia",
+    valor: "KIT LAVANDERIA",
+    sku: "911.K01.003",
+    marca: "Mundo UD",
+    grupo: "casa",
+    itens: ["Cesto De Roupas Empilhável", "Porta Sabão Em Pócom Dosador", "Cestinho Para Prendedor"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "NitronBox",
+    valor: "KIT NITRONBOX",
+    sku: "912.K01.002",
+    marca: "Nitron",
+    grupo: "cozinha",
+    itens: ["Nitronbox 10L"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Cozinha Rattan",
+    valor: "KIT COZINHA RATTAN",
+    sku: "913.K01.003",
+    marca: "Mundo UD",
+    grupo: "cozinha",
+    itens: ["Lixeira Rattan Com Clique", "Lixeira Rattan Com Pedal", "Porta Sabão Liquido Flat", "Porta Detergente Rattan Com Base", "Escorredor De Pratos Rattan"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Micro-ondas",
+    valor: "KIT MICRO-ONDAS",
+    sku: "914.K01.002",
+    marca: "Mundo UD",
+    grupo: "cozinha",
+    itens: ["Caçarola Micro-Ondas Com Cesto", "Cook Freezer Com Cesto", "Tampa Para Micro-Ondas", "Omeleteira Micro-Ondas"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Cozinha Flat",
+    valor: "KIT COZINHA FLAT",
+    sku: "905.K01.003",
+    marca: "Mundo UD",
+    grupo: "cozinha",
+    itens: ["Lixeira Flat Com Pedal", "Lixeira Verona", "Kit Detergente Flat Com 2 Peças", "Escorredor De Pratos Flat"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Banheiro",
+    valor: "KIT BANHEIRO",
+    sku: "906.K01.003",
+    marca: "Mundo UD",
+    grupo: "casa",
+    itens: ["Lixeira Flat Com Pedal", "Pota Sabonete Liquido Flat", "Porta Algodão E Cotonete Flat", "Porta Escovas Flat", "Saboneteira Com Tela Flat"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Medicamento",
+    valor: "KIT MEDICAMENTO",
+    sku: "907.K01.999",
+    marca: "Mundo UD",
+    grupo: "casa",
+    itens: ["Frasqueira Medicamentos 1,4L", "Frasqueira Medicamentos Mega Luxo", "Organiza Tudo 7 Divisórias"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Limpeza",
+    valor: "KIT LIMPEZA",
+    sku: "908.K01.999",
+    marca: "Mundo UD",
+    grupo: "casa",
+    itens: ["Balde Limpex", "Cestinho Para Prendedor Floral", "Pá De Lixo Com Cabo", "Porta Vassouras Com 9 Posições"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Modular 10 Peças",
+    valor: "KIT MODULAR 10 PEÇAS",
+    sku: "909.K01.001",
+    marca: "Mundo UD",
+    grupo: "cozinha",
+    itens: ["Kit Potes Modulares Com 6 Peças", "Pote Modular 2,4L", "Pote Modular 800Ml"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "Geladeira",
+    valor: "KIT GELADEIRA",
+    sku: "910.K01.001",
+    marca: "Mundo UD",
+    grupo: "cozinha",
+    itens: ["Organizador De Geladeira Rattan 7L", "Organizador De Geladeira Rattan 4L", "Organizador De Geladeira Rattan 2L"],
+    foto: "",
+    ativo: true,
+  },
+  {
+    nome: "POP",
+    valor: "KIT POP",
+    sku: "911.K01.001",
+    marca: "Mundo UD",
+    grupo: "cozinha",
+    itens: ["Kit Pop - 6 Potes Com Válvula", "Kit Pop Com 5 Marmitas Fits"],
+    foto: "",
+    ativo: true,
+  },
+  ];
+
+  var GRUPOS = [
+    { id:"mesa",    nome:"Mesa e madeira" },
+    { id:"cozinha", nome:"Cozinha" },
+    { id:"casa",    nome:"Organização da casa" }
+  ];
+
+  /* ====== RENDERIZACAO ====== */
+
+  var raiz     = document.getElementById("nk-seletor");
+  var alvo     = document.getElementById("nk-grupos");
+  var barra    = document.getElementById("nk-barra");
+  var barraVal = document.getElementById("nk-barra-valor");
+  var aviso    = document.getElementById("nk-aviso");
+
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  function cardHtml(kit, i){
+    var foto = kit.foto
+      ? '<img src="' + esc(kit.foto) + '" alt="Kit ' + esc(kit.nome) + '" loading="lazy">'
+      : '<div class="nk-sem-foto"><span>' + esc(kit.nome) + '</span></div>';
+
+    var itens = kit.itens.map(function(it){
+      return "<li>" + esc(it) + "</li>";
+    }).join("");
+
+    return '' +
+      '<label class="nk-card">' +
+        '<input type="radio" name="nk-kit" value="' + esc(kit.valor) + '"' +
+               ' data-marca="' + esc(kit.marca) + '" data-i="' + i + '">' +
+        '<div class="nk-corpo">' +
+          '<div class="nk-foto">' + foto +
+            '<span class="nk-marca">' + esc(kit.marca) + '</span>' +
+            '<span class="nk-check" aria-hidden="true">' +
+              '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>' +
+            '</span>' +
+          '</div>' +
+          '<div class="nk-info">' +
+            '<h3 class="nk-nome">' + esc(kit.nome) + '</h3>' +
+            '<ul class="nk-itens">' + itens + '</ul>' +
+          '</div>' +
+        '</div>' +
+      '</label>';
+  }
+
+  function desenhar(){
+    var ativos = KITS.filter(function(k){ return k.ativo; });
+    var html = "";
+
+    GRUPOS.forEach(function(g){
+      var doGrupo = ativos.filter(function(k){ return k.grupo === g.id; });
+      if (!doGrupo.length) return;
+      html += '<section class="nk-grupo">' +
+                '<h3 class="nk-grupo-nome">' + esc(g.nome) + '</h3>' +
+                '<div class="nk-grade">' +
+                  doGrupo.map(function(k){ return cardHtml(k, KITS.indexOf(k)); }).join("") +
+                '</div>' +
+              '</section>';
+    });
+
+    alvo.innerHTML = html;
+    raiz.setAttribute("data-vazio", ativos.length ? "false" : "true");
+  }
+
+  /* ====== ESCRITA NOS CAMPOS DO GHL ====== */
+
+  function acharCampos(chave){
+    var seletores = [];
+    ["input","select","textarea"].forEach(function(t){
+      ['[name*="','[id*="','[data-q*="'].forEach(function(p){
+        seletores.push(t + p + chave + '"]');
+      });
+    });
+    var achados = [];
+    document.querySelectorAll(seletores.join(",")).forEach(function(el){
+      if (raiz.contains(el)) return;              // nunca os nossos proprios radios
+      if (achados.indexOf(el) === -1) achados.push(el);
+    });
+    return achados;
+  }
+
+  function disparar(el){
+    el.dispatchEvent(new Event("input",  { bubbles:true }));
+    el.dispatchEvent(new Event("change", { bubbles:true }));
+  }
+
+  // Campo controlado por framework ignora `el.value = x`. O setter nativo
+  // do prototype e o unico jeito de o React/Vue registrar a mudanca.
+  function setNativo(el, valor){
+    var proto = (el.tagName === "TEXTAREA")
+      ? window.HTMLTextAreaElement.prototype
+      : window.HTMLInputElement.prototype;
+    var d = Object.getOwnPropertyDescriptor(proto, "value");
+    if (d && d.set) { d.set.call(el, valor); } else { el.value = valor; }
+    disparar(el);
+  }
+
+  function escrever(els, valor){
+    var escreveu = false;
+    els.forEach(function(el){
+      if (el.tagName === "SELECT"){
+        var opt = null;
+        for (var i = 0; i < el.options.length; i++){
+          var o = el.options[i];
+          if (o.value === valor || o.textContent.trim() === valor){ opt = o; break; }
+        }
+        if (!opt) return;
+        el.value = opt.value; disparar(el); escreveu = true;
+
+      } else if (el.type === "radio"){
+        var rot = el.labels && el.labels[0] ? el.labels[0].textContent.trim() : "";
+        if (el.value === valor || rot === valor){
+          el.checked = true; disparar(el); escreveu = true;
+        }
+
+      } else if (el.type === "checkbox"){
+        return;                                    // checkbox nao e escolha unica
+
+      } else {
+        setNativo(el, valor); escreveu = true;
+      }
+    });
+    return escreveu;
+  }
+
+  function esconder(el){
+    var no = el;
+    for (var i = 0; i < 4; i++){
+      var pai = no.parentElement;
+      if (!pai || pai === document.body) break;
+      // para de subir se o ancestral tiver outro campo dentro
+      if (pai.querySelectorAll("input,select,textarea").length > 1) break;
+      no = pai;
+    }
+    no.style.display = "none";
+  }
+
+  /* ====== APLICACAO DA ESCOLHA ====== */
+
+  var pendente = null;   // escolha feita antes dos campos existirem no DOM
+  var jaEscondeu = false;
+
+  function aplicar(valor, marca){
+    var campoKit   = acharCampos(CAMPOS.kit);
+    var campoMarca = acharCampos(CAMPOS.marca);
+
+    if (!campoKit.length){
+      pendente = { valor:valor, marca:marca };
+      return false;
+    }
+
+    var okKit = escrever(campoKit, valor);
+    if (campoMarca.length) escrever(campoMarca, marca);
+
+    if (okKit && ESCONDER_ORIGINAL && !jaEscondeu){
+      campoKit.forEach(esconder);
+      campoMarca.forEach(esconder);
+      jaEscondeu = true;
+    }
+
+    pendente = okKit ? null : { valor:valor, marca:marca };
+    if (DEBUG) relatar(campoKit, campoMarca, valor, okKit);
+    return okKit;
+  }
+
+  function relatar(campoKit, campoMarca, valor, ok){
+    aviso.classList.remove("nk-oculto");
+    aviso.innerHTML =
+      "<b>Diagnóstico</b> (DEBUG = true)<br>" +
+      "Valor a gravar: <code>" + esc(valor) + "</code><br>" +
+      "Campos de kit encontrados: <b>" + campoKit.length + "</b> " +
+      (campoKit.length ? "(" + campoKit.map(function(e){
+        return "<code>" + esc(e.tagName.toLowerCase() + (e.type ? ":" + e.type : "") +
+               " name=" + (e.getAttribute("name") || "—")) + "</code>";
+      }).join(" ") + ")" : "") + "<br>" +
+      "Campos de marca encontrados: <b>" + campoMarca.length + "</b><br>" +
+      "Gravou: <b>" + (ok ? "sim" : "NÃO") + "</b>";
+  }
+
+  function modoDemo(valor, marca){
+    aviso.classList.remove("nk-oculto");
+    aviso.innerHTML =
+      "<b>Modo demonstração.</b> Não achei os campos do GoHighLevel nesta " +
+      "página, então nada foi gravado. Dentro do formulário, esta escolha " +
+      "gravaria:<br>" +
+      "<code>" + esc(CAMPOS.kit) + "</code> = <b>" + esc(valor) + "</b><br>" +
+      "<code>" + esc(CAMPOS.marca) + "</code> = <b>" + esc(marca) + "</b>";
+  }
+
+  /* ====== EVENTOS ====== */
+
+  desenhar();
+
+  alvo.addEventListener("change", function(ev){
+    var r = ev.target;
+    if (!r || r.name !== "nk-kit") return;
+
+    var kit = KITS[Number(r.getAttribute("data-i"))];
+    barra.setAttribute("data-escolhido", "true");
+    barraVal.textContent = kit.nome + " · " + kit.marca;
+
+    var ok = aplicar(r.value, kit.marca);
+    if (!ok && !DEBUG) {
+      // Os campos podem ainda nao ter montado. Espera o observer; se em
+      // 2,5s nao aparecerem, avisa em vez de falhar em silencio.
+      setTimeout(function(){
+        if (pendente) modoDemo(pendente.valor, pendente.marca);
+      }, 2500);
+    }
+  });
+
+  // O formulario do GHL monta os campos depois deste script rodar. O
+  // observer reaplica a escolha assim que eles aparecem.
+  if (window.MutationObserver){
+    var obs = new MutationObserver(function(){
+      if (!pendente) return;
+      if (aplicar(pendente.valor, pendente.marca)){
+        aviso.classList.add("nk-oculto");
+      }
+    });
+    obs.observe(document.documentElement, { childList:true, subtree:true });
+  }
+})();
+</script>
+</div>
