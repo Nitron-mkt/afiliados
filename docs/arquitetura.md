@@ -61,13 +61,13 @@ Revisado em 19/08/2026 contra o estado real do GHL — ver `ghl-inventario.md`.
 | 2 | Campo `Bairro` nao existe no GHL | W1 e W9 nao validam endereco; Sankhya nao emite nota | aberta, confirmada |
 | 3 | Chaves de merge field | `afiliado__marca_alocada` e `afiliado__codigo_de_rastreio` **confirmadas**; `bairro` nao existe | resolvida em 2 de 3 |
 | 4 | Lista de kits aprovados nao fechada | W1 passo 4 | aberta |
-| 5 | Sincronizacao Supabase -> GHL | — | **feita**: `ghl-sync` |
+| 5 | Sincronizacao Supabase -> GHL | — | **feita e testada com write real**: `ghl-sync` |
 | 6 | GMV nao volta do Sankhya/Shopify | W6 nunca dispara sozinho | aberta |
 | 7 | Pesos do classificador sem calibracao | qualidade de tudo a jusante | aberta |
 | 8 | **W0 nao existe** e a tag `afil-import` nao existe | a porta de entrada da importacao | contornada pelo `ghl-sync` |
 | 9 | **W4 nao existe** | a trava de reenvio | aberta, ver aviso abaixo |
 | 10 | **Nada aloca kit nem marca** | `kit_alocado` e `marca_alocada` sao null nos 97 criadores. Sem marca o W9 aplica `afil-sem-marca` e o W1 barra a amostra | aberta |
-| 11 | Seis tags do guia nao existem no GHL | `afil-import` `afil-devolvido` `afil-conteudo-combinado` `afil-revendedor` `afil-cadastro-incompleto` `afil-teste` | aberta |
+| 11 | Cinco tags do guia nao existem no GHL | `afil-devolvido` `afil-conteudo-combinado` `afil-revendedor` `afil-cadastro-incompleto` `afil-teste`. A `afil-import` passou a existir no teste do sync | aberta |
 
 Nenhuma pendencia esta causando dano agora: o pipeline de afiliados esta
 vazio, entao nenhum workflow chegou a agir sobre um afiliado de verdade. As

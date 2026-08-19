@@ -223,3 +223,59 @@ Tags que ja existem e podem confundir por semelhanca: `sem-email` (sem prefixo
 `afil-`), `creator_qualificado`, `teste-creator-piloto`, `origem-tiktok`,
 `trilho:key-account`. Nenhuma e usada pelos W0-W9 — nao reaproveitar por
 engano.
+
+
+---
+
+## Teste real do `ghl-sync` — 19/08/2026
+
+Primeiro write de verdade no GHL vindo do pool. Escolhido de proposito um
+`key_account`, porque ele entra no stage `Key Account`, que nao e trigger de
+workflow nenhum: zero chance de mensagem sair.
+
+**Criador:** `@beavilhosa` — 30.800 seguidores, 5,21% de engajamento,
+`beatrizcolabs@gmail.com`. Virou key account pelo sinal de agencia no e-mail
+(`colabs`), nao por audiencia.
+
+| Passo | Endpoint | HTTP | Resultado |
+|---|---|---|---|
+| 1 | `POST /contacts/upsert` | 201 | contato novo `y5O6rdYtr4hRyUkVUP9c`, `new: true` |
+| 2 | `POST /contacts/{id}/tags` | 201 | `tagsAdded: [afiliado, afil-import]` |
+| 3 | `POST /opportunities/upsert` | 201 | card `awtONOhMvByWN5E0ggKw` em `Key Account` |
+| 4 | `marcar_sincronizado()` | — | status `no_ghl`, ids gravados, 1 linha em `ghl_sync_log` |
+
+### O que o teste provou
+
+**Os 9 campos customizados entraram todos, pelo id.** E o GHL coage o tipo:
+mandei `"5.21"`, `"30800"` e `"0"` como string e voltaram como numero
+(`5.21`, `30800`, `0`). Nao precisa converter na origem.
+
+**A tag entra aditiva.** O endpoint separado devolveu `tagsAdded` com as duas,
+e o `upsert` do passo 1 deixou `tags: []` — confirmando que ele nao mexe em
+tag quando o campo `tags` nao e enviado.
+
+**O card nasce no stage certo e ninguem o move.** Reconsultado depois:
+`lastStageChangeAt` igual ao `createdAt`, ainda em `Key Account`. O W5 nao
+disparou, como esperado — o trigger dele e `Mapeado`.
+
+**Nenhuma mensagem saiu.** Consultado por `contactId`: 0 mensagens em
+WhatsApp/SMS e 0 em Email. O W7 nao tocou nele.
+
+**A fila fechou o ciclo:** de 12 para 11 criadores pendentes, 1 log ok,
+0 falhas.
+
+### Efeito colateral util
+
+A tag **`afil-import` passou a existir** (`GITCCbKTv5TKLVVmNiqY`), criada pelo
+proprio endpoint de tags. Ou seja, o `add-tags` do GHL cria tag que nao existe
+em vez de falhar. Restam cinco por criar: `afil-devolvido`,
+`afil-conteudo-combinado`, `afil-revendedor`, `afil-cadastro-incompleto`,
+`afil-teste`.
+
+### O que o teste NAO cobriu
+
+Os tres writes foram feitos pelas ferramentas do GHL, com o payload exato que
+a `fila_sync_ghl` produziu, nao pela edge function rodando de ponta a ponta.
+O que ficou sem exercicio e o laco da propria funcao: iteracao sobre varios
+itens, tratamento de falha item a item e o `registrar_falha_sync`. A resolucao
+do token pelo Vault **foi** exercitada, no ensaio que respondeu 200.
