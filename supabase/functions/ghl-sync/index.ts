@@ -5,6 +5,9 @@
 // Aqui so tem o que precisa de rede: chamar a API do GHL na ordem certa,
 // tratar falha item a item e fechar o ciclo no banco.
 //
+// O token do GHL vem do secret do projeto, ou do Vault se o secret nao
+// existir. Ver a migration leitor_de_segredo_do_vault.
+//
 // POST { dry_run?: boolean, limite?: number, handles?: string[] }
 //
 // dry_run e TRUE por padrao. Sem `{"dry_run": false}` explicito nada e
@@ -15,7 +18,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const GHL_TOKEN = Deno.env.get("GHL_API_TOKEN")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
@@ -34,7 +36,20 @@ const json = (body: unknown, status = 200) =>
 
 type GhlResposta = { status: number; corpo: any };
 
+// O token vem do secret do projeto se existir; senao, do Vault.
+// A env var tem precedencia: quando o secret oficial for configurado no
+// dashboard, ele passa a valer e o caminho do Vault vira peso morto.
+async function resolverToken(db: any): Promise<string | null> {
+  const doAmbiente = Deno.env.get("GHL_API_TOKEN");
+  if (doAmbiente) return doAmbiente;
+
+  const { data, error } = await db.rpc("segredo", { p_nome: "GHL_API_TOKEN" });
+  if (error || !data) return null;
+  return String(data);
+}
+
 async function ghl(
+  token: string,
   metodo: string,
   caminho: string,
   corpo?: unknown,
@@ -42,7 +57,7 @@ async function ghl(
   const r = await fetch(`${GHL_BASE}${caminho}`, {
     method: metodo,
     headers: {
-      Authorization: `Bearer ${GHL_TOKEN}`,
+      Authorization: `Bearer ${token}`,
       Version: GHL_VERSION,
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -62,9 +77,16 @@ async function ghl(
 
 Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return json({ erro: "use POST" }, 405);
-  if (!GHL_TOKEN) return json({ erro: "GHL_API_TOKEN nao configurado" }, 500);
 
   const db = createClient(SUPABASE_URL, SERVICE_KEY);
+
+  const token = await resolverToken(db);
+  if (!token) {
+    return json({
+      erro: "GHL_API_TOKEN nao encontrado",
+      onde_procurei: ["secret do projeto", "vault (rpc segredo)"],
+    }, 500);
+  }
 
   let entrada: any = {};
   if (req.headers.get("content-length") !== "0") {
@@ -136,7 +158,7 @@ Deno.serve(async (req: Request) => {
 
     // 1) contato. Upsert porque o criador pode ja existir na base como
     //    outra coisa (cliente B2B, lead antigo).
-    const up = await ghl("POST", "/contacts/upsert", item.payload);
+    const up = await ghl(token, "POST", "/contacts/upsert", item.payload);
     const contactId = up.corpo?.contact?.id ?? up.corpo?.id;
 
     if (up.status >= 300 || !contactId) {
@@ -156,7 +178,7 @@ Deno.serve(async (req: Request) => {
 
     // 2) tags por endpoint separado, porque o campo `tags` do upsert
     //    substitui todas as tags existentes do contato.
-    const tg = await ghl("POST", `/contacts/${contactId}/tags`, { tags: TAGS_ENTRADA });
+    const tg = await ghl(token, "POST", `/contacts/${contactId}/tags`, { tags: TAGS_ENTRADA });
     passo.tags_http = tg.status;
 
     if (tg.status >= 300) {
@@ -180,7 +202,7 @@ Deno.serve(async (req: Request) => {
       contactId,
       monetaryValue: 0,
     };
-    const op = await ghl("POST", "/opportunities/upsert", opBody);
+    const op = await ghl(token, "POST", "/opportunities/upsert", opBody);
     const oppId = op.corpo?.opportunity?.id ?? op.corpo?.id;
 
     if (op.status >= 300 || !oppId) {

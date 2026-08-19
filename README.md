@@ -84,16 +84,34 @@ devem contar a mesma historia.
 
 ## Edge Functions
 
-| Slug | O que faz | Secret que precisa |
+| Slug | O que faz | Credencial |
 |---|---|---|
-| `apify-ingest` | recebe o webhook do Apify e entrega ao Postgres | `APIFY_TOKEN` |
-| `ghl-sync` | leva a fila aprovada para o GHL: contato, tags e card | `GHL_API_TOKEN` |
+| `apify-ingest` | recebe o webhook do Apify e entrega ao Postgres | `APIFY_TOKEN` (secret do projeto) |
+| `ghl-sync` | leva a fila aprovada para o GHL: contato, tags e card | `GHL_API_TOKEN` (secret do projeto **ou** Vault) |
 
 `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` sao injetados pelo runtime.
 
+### Onde vive o token do GHL
+
+O `ghl-sync` procura em duas ordens: primeiro o secret do projeto, depois o
+Vault. Hoje ele esta **no Vault**, porque o secret do projeto exige o CLI ou o
+dashboard.
+
+```sql
+-- ver o que esta guardado (nao mostra o valor)
+select name, description, created_at from vault.secrets;
+
+-- rotacionar
+select vault.update_secret(
+  (select id from vault.secrets where name = 'GHL_API_TOKEN'),
+  '<token novo>');
+```
+
+Quando o secret do projeto for configurado no dashboard, ele passa a ter
+precedencia automaticamente e o caminho do Vault pode ser removido.
+
 ```bash
 supabase functions deploy ghl-sync --project-ref rztvbnvwigtfegqsrtew
-supabase secrets set GHL_API_TOKEN=... --project-ref rztvbnvwigtfegqsrtew
 ```
 
 ### Rodando o sync
