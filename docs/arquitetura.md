@@ -57,7 +57,7 @@ Revisado em 19/08/2026 contra o estado real do GHL — ver `ghl-inventario.md`.
 
 | # | Pendencia | Bloqueia | Estado |
 |---|---|---|---|
-| 1 | **W7 esta publicado com frete nao medido** | os e-mails de comissao estao no ar agora | **aberta, urgente** |
+| 1 | **W7 esta publicado com frete nao medido** | nenhum e-mail saiu ainda (0 contatos entraram, pipeline vazio), mas dispara no primeiro sync real | aberta |
 | 2 | Campo `Bairro` nao existe no GHL | W1 e W9 nao validam endereco; Sankhya nao emite nota | aberta, confirmada |
 | 3 | Chaves de merge field | `afiliado__marca_alocada` e `afiliado__codigo_de_rastreio` **confirmadas**; `bairro` nao existe | resolvida em 2 de 3 |
 | 4 | Lista de kits aprovados nao fechada | W1 passo 4 | aberta |
@@ -69,8 +69,14 @@ Revisado em 19/08/2026 contra o estado real do GHL — ver `ghl-inventario.md`.
 | 10 | **Nada aloca kit nem marca** | `kit_alocado` e `marca_alocada` sao null nos 97 criadores. Sem marca o W9 aplica `afil-sem-marca` e o W1 barra a amostra | aberta |
 | 11 | Seis tags do guia nao existem no GHL | `afil-import` `afil-devolvido` `afil-conteudo-combinado` `afil-revendedor` `afil-cadastro-incompleto` `afil-teste` | aberta |
 
-Pendencia 1 e a unica que esta custando dinheiro **enquanto voce le isto**.
+Nenhuma pendencia esta causando dano agora: o pipeline de afiliados esta
+vazio, entao nenhum workflow chegou a agir sobre um afiliado de verdade. As
+travas que ja existem foram verificadas e funcionam — ver a secao do W2 em
+`ghl-inventario.md`.
+
+Pendencia 1 e a que cria dano no minuto do primeiro sync real.
 Pendencia 10 e a que trava a jornada no meio, depois do aceite.
+Pendencia 9 e a que cria dano na primeira amostra extraviada.
 
 **Aviso sobre o W4:** o guia manda construir o W4 antes do W2b. Hoje o W2b
 esta publicado e o W4 nao existe — por acaso, seguro. O risco aparece no

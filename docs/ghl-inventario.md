@@ -12,7 +12,7 @@ pela interface.
 
 | # | Achado | Impacto |
 |---|---|---|
-| 1 | **W7 esta `published`** | os e-mails de comissao estao no ar com frete nao medido |
+| 1 | **W7 esta `published`** com frete nao medido | arma carregada, **nao** disparada: 0 contatos entraram. Ver a verificacao abaixo |
 | 2 | **W0 nao existe** e a tag `afil-import` nao existe | a porta de entrada da importacao nao esta construida |
 | 3 | **W4 nao existe** | ver nota de seguranca abaixo |
 | 4 | Chaves `afiliado__marca_alocada` e `afiliado__codigo_de_rastreio` **confirmadas** | pendencia 3 do arquitetura.md resolvida em 2 de 3 |
@@ -35,19 +35,43 @@ W2b ja no ar, e exatamente a Colisao 2.
 
 ## Workflows
 
-| Guia | Nome no GHL | ID | Status |
-|---|---|---|---|
-| **W0** | — | — | **nao existe** |
-| W1 | `W1 Marcação e ponte para logística` | `9936a193-811e-4da8-9bca-d745ad720fb4` | draft |
-| W2 | `W2 Amostra entregue` | `7e9e8642-6515-4d4c-b6b1-cbe7a348f204` | published |
-| W2b | `W2b Amostra extraviada` | `c23929da-6c9c-4c39-9d98-92bd48793d0e` | published |
-| W3 | `W3 Cobrança de conteúdo` | `fb518d9d-8591-4c83-b9fa-c71dca5e6fc2` | draft |
-| **W4** | — | — | **nao existe** |
-| W5 | `W5 Exclusão de revendedor` | `10a9877f-5f20-486b-bfd3-4c5df998a07b` | published |
-| **W6** | — | — | nao existe (esperado: e o ultimo da ordem) |
-| W7 | `W7 Sequência de e-mail` | `826540f2-4f9c-4161-a6d6-e57afa694164` | **published** |
-| W8 | `W8 Resposta detectada` | `00e9d5d1-c9f4-492f-838b-8925baab61ba` | published |
-| W9 | `W9 Formulário recebido` | `d6ff662d-782e-401a-9b71-77a015282a13` | published |
+| Guia | Nome no GHL | ID | Status | Contatos que entraram |
+|---|---|---|---|---|
+| **W0** | — | — | **nao existe** | — |
+| W1 | `W1 Marcação e ponte para logística` | `9936a193-811e-4da8-9bca-d745ad720fb4` | draft | 0 |
+| W2 | `W2 Amostra entregue` | `7e9e8642-6515-4d4c-b6b1-cbe7a348f204` | published | **1223** |
+| W2b | `W2b Amostra extraviada` | `c23929da-6c9c-4c39-9d98-92bd48793d0e` | published | **23** |
+| W3 | `W3 Cobrança de conteúdo` | `fb518d9d-8591-4c83-b9fa-c71dca5e6fc2` | draft | 0 |
+| **W4** | — | — | **nao existe** | — |
+| W5 | `W5 Exclusão de revendedor` | `10a9877f-5f20-486b-bfd3-4c5df998a07b` | published | 0 |
+| **W6** | — | — | nao existe (esperado: e o ultimo da ordem) | — |
+| W7 | `W7 Sequência de e-mail` | `826540f2-4f9c-4161-a6d6-e57afa694164` | **published** | 0 |
+| W8 | `W8 Resposta detectada` | `00e9d5d1-c9f4-492f-838b-8925baab61ba` | published | 32 |
+| W9 | `W9 Formulário recebido` | `d6ff662d-782e-401a-9b71-77a015282a13` | published | 0 |
+
+### A trava do passo 1 do W2 funciona — verificado
+
+Os 1223 do W2 assustam, porque o trigger e `Entregas -> Entregue`, que dispara
+em **toda** entrega da empresa, nao so em amostra de afiliado. Se a checagem
+de tag do passo 1 nao estivesse no lugar, 1223 clientes teriam recebido
+"sua caixa chegou?".
+
+Nao receberam. Tres verificacoes independentes, 19/08/2026:
+
+| Verificacao | Resultado | O que prova |
+|---|---|---|
+| contatos com a tag `amostra-afiliado` | **0** | a condicao do passo 1 e falsa para todo mundo que entrou |
+| cards no pipeline `Afiliados Jornada` | **0** | ninguem chegou ao passo 2, que moveria para `Amostra recebida` |
+| WhatsApp e SMS de saida com o texto do W2 | nenhum | o passo 4 nunca rodou |
+
+A tag `afil-devolvido` tambem nao existe na sub-conta, o que confirma o mesmo
+para os 23 do W2b: se algum tivesse passado do passo 1, o passo 2 teria criado
+a tag.
+
+**O pipeline de afiliados esta vazio: nenhum card, nunca.** Isso explica o 0
+do W7 tambem — nada chegou a `Qualificado`, porque nada chegou a lugar nenhum.
+O W7 esta publicado e inofensivo *por enquanto*, pela mesma razao. Ele deixa de
+ser inofensivo no primeiro `ghl-sync` com `dry_run: false`.
 
 Sobra tambem `New Workflow : 1786716077172` (`2d3a203a-...`, draft, criado
 14/08) — parece rascunho abandonado. Vale apagar: o W8 remove contato do W7
