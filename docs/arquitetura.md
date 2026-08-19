@@ -53,18 +53,59 @@ do W4 manda a primeira amostra extraviada para `Recorrente`.
 
 ## Pendencias reais
 
-| # | Pendencia | Bloqueia |
-|---|---|---|
-| 1 | Frete nao medido | publicar o W7: os e-mails prometem comissao sem numero confiavel |
-| 2 | Campo `Bairro` nao existe no GHL | W1 e W9 nao validam endereco; Sankhya nao emite nota |
-| 3 | Chaves de merge field nao conferidas | `afiliado__marca_alocada`, `bairro`, `afiliado__codigo_de_rastreio` sao deducao |
-| 4 | Lista de kits aprovados nao fechada | W1 passo 4 |
-| 5 | Sincronizacao Supabase -> GHL e manual | `fila_ghl` existe, o envio nao |
-| 6 | GMV nao volta do Sankhya/Shopify | W6 nunca dispara sozinho |
-| 7 | Pesos do classificador sem calibracao | qualidade de tudo a jusante |
+Revisado em 19/08/2026 contra o estado real do GHL — ver `ghl-inventario.md`.
 
-Pendencia 5 e a que mais custa tempo por dia. Pendencia 1 e a que mais
-custa dinheiro se ignorada.
+| # | Pendencia | Bloqueia | Estado |
+|---|---|---|---|
+| 1 | **W7 esta publicado com frete nao medido** | os e-mails de comissao estao no ar agora | **aberta, urgente** |
+| 2 | Campo `Bairro` nao existe no GHL | W1 e W9 nao validam endereco; Sankhya nao emite nota | aberta, confirmada |
+| 3 | Chaves de merge field | `afiliado__marca_alocada` e `afiliado__codigo_de_rastreio` **confirmadas**; `bairro` nao existe | resolvida em 2 de 3 |
+| 4 | Lista de kits aprovados nao fechada | W1 passo 4 | aberta |
+| 5 | Sincronizacao Supabase -> GHL | — | **feita**: `ghl-sync` |
+| 6 | GMV nao volta do Sankhya/Shopify | W6 nunca dispara sozinho | aberta |
+| 7 | Pesos do classificador sem calibracao | qualidade de tudo a jusante | aberta |
+| 8 | **W0 nao existe** e a tag `afil-import` nao existe | a porta de entrada da importacao | contornada pelo `ghl-sync` |
+| 9 | **W4 nao existe** | a trava de reenvio | aberta, ver aviso abaixo |
+| 10 | **Nada aloca kit nem marca** | `kit_alocado` e `marca_alocada` sao null nos 97 criadores. Sem marca o W9 aplica `afil-sem-marca` e o W1 barra a amostra | aberta |
+| 11 | Seis tags do guia nao existem no GHL | `afil-import` `afil-devolvido` `afil-conteudo-combinado` `afil-revendedor` `afil-cadastro-incompleto` `afil-teste` | aberta |
+
+Pendencia 1 e a unica que esta custando dinheiro **enquanto voce le isto**.
+Pendencia 10 e a que trava a jornada no meio, depois do aceite.
+
+**Aviso sobre o W4:** o guia manda construir o W4 antes do W2b. Hoje o W2b
+esta publicado e o W4 nao existe — por acaso, seguro. O risco aparece no
+minuto em que o W4 nascer: ele precisa ja vir com o passo 1 que checa e limpa
+`afil-devolvido`, ou a Colisao 2 acontece na primeira amostra extraviada.
+
+## Como o `ghl-sync` se encaixa
+
+Ele faz o que o W0 faria, e um pouco mais, do lado do Supabase:
+
+1. Le `fila_sync_ghl` — quem esta em `apto_email` ou `key_account` e ainda
+   nao tem `ghl_contact_id`
+2. `POST /contacts/upsert` com o payload montado por `payload_ghl_contato()`
+3. `POST /contacts/{id}/tags` — separado de proposito: o campo `tags` do
+   upsert **substitui** todas as tags do contato, e o criador pode ja existir
+   na base como cliente B2B
+4. `POST /opportunities/upsert` — card em `Mapeado`, ou em `Key Account` se
+   o roteamento marcou key account
+5. `marcar_sincronizado()` — grava os ids, move para `no_ghl`, registra em
+   `ghl_sync_log`
+
+Falha em qualquer passo entra em `ghl_sync_log` e **nao** marca como
+sincronizado: a rodada seguinte tenta de novo, e o upsert nao duplica.
+
+**`dry_run` e true por padrao.** Sem `{"dry_run": false}` explicito nada e
+escrito. Isso existe por causa de uma cadeia: card em `Mapeado` dispara o W5,
+que promove para `Qualificado`, que dispara o W7 — que esta publicado. Ou
+seja, hoje sincronizar de verdade **manda e-mail prometendo comissao**.
+Key account nao tem esse problema: entra direto no stage `Key Account`, que
+nao e trigger de nada.
+
+Por que o sync cria o card em vez de deixar o W0 fazer: o W0 nao existe, e a
+trava de revendedor que ele faria (CNPJ, Codigo Representante) o W5 ja repete
+como rede de seguranca. Se um dia o W0 for construido, ele usa
+`Create/Update Opportunity` — atualiza o card em vez de duplicar.
 
 ## Sub-conta GHL
 

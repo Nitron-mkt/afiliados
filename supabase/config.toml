@@ -2,3 +2,6 @@ project_id = "rztvbnvwigtfegqsrtew"
 
 [functions.apify-ingest]
 verify_jwt = true
+
+[functions.ghl-sync]
+verify_jwt = true
