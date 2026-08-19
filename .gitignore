@@ -1,0 +1,18 @@
+# segredos: nunca versionar
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# supabase cli
+supabase/.branches/
+supabase/.temp/
+.branches/
+.temp/
+
+# lixo de sistema
+.DS_Store
+node_modules/
+dist/
+*.log

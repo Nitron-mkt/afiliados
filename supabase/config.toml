@@ -1,0 +1,4 @@
+project_id = "rztvbnvwigtfegqsrtew"
+
+[functions.apify-ingest]
+verify_jwt = true
