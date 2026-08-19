@@ -64,7 +64,7 @@ Revisado em 19/08/2026 contra o estado real do GHL — ver `ghl-inventario.md`.
 | 5 | Sincronizacao Supabase -> GHL | — | **feita e testada com write real**: `ghl-sync` |
 | 6 | GMV nao volta do Sankhya/Shopify | W6 nunca dispara sozinho | aberta |
 | 7 | Pesos do classificador sem calibracao | qualidade de tudo a jusante | aberta |
-| 8 | **W0 nao existe** e a tag `afil-import` nao existe | a porta de entrada da importacao | contornada pelo `ghl-sync` |
+| 8 | **W0 nao existe** | a porta de entrada da importacao | contornada pelo `ghl-sync`, que ja cria contato e card |
 | 9 | **W4 nao existe** | a trava de reenvio | aberta, ver aviso abaixo |
 | 10 | **Nada aloca kit nem marca** | `kit_alocado` e `marca_alocada` sao null nos 97 criadores. Sem marca o W9 aplica `afil-sem-marca` e o W1 barra a amostra | aberta |
 | 11 | Cinco tags do guia nao existem no GHL | `afil-devolvido` `afil-conteudo-combinado` `afil-revendedor` `afil-cadastro-incompleto` `afil-teste`. A `afil-import` passou a existir no teste do sync | aberta |
