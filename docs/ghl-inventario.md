@@ -154,7 +154,33 @@ Campos gerais que a jornada usa:
 | CNPJ | `contact.cpfcnpj` | atencao: o **nome** e CNPJ, a **chave** e `cpfcnpj` |
 | Codigo Representante | `contact.codigo_representante` | trava de revendedor do W0/W5/W9 |
 | WhatsApp | `contact.whatsapp` | campo customizado, separado do phone padrao |
-| **Bairro** | **nao existe** | criar como TEXT, sem prefixo de afiliado |
+| **Bairro** | **nao existe** | criar como TEXT, sem prefixo de afiliado. **So pela interface** — ver abaixo |
+
+### Campo de contato nao se cria por API — testado
+
+Tentado em 19/08/2026, e a API responde sem ambiguidade:
+
+```
+POST /custom-fields/  { objectKey: "contact", fieldKey: "contact.bairro", ... }
+-> 400  "Api does not support objectKey of type contact or opportunity"
+```
+
+A rota de leitura por id tem o mesmo limite:
+`GET /custom-fields/{id}` -> 400 `"Fields with model contact is not supported on this route"`.
+
+O `POST /custom-fields/` so aceita Custom Object e Company. Ler a lista de
+campos de contato funciona (`GET /locations/{id}/customFields?model=contact`),
+criar nao. Nao insistir: e limite do GHL, nao de credencial.
+
+**Como criar o Bairro:** `Settings` -> `Custom Fields`, na mesma pasta onde
+estao `CPF`, `CNPJ`, `Codigo Representante`, `Zona` e `Praca`
+(id `BBYq38L550saG72oULys`). Tipo **TEXT**, nome **Bairro**, sem prefixo de
+afiliado — ele serve para a conta toda, nao so para afiliado.
+
+Depois de criar, faltam dois passos que a interface tambem exige:
+1. incluir o campo no formulario de cadastro de afiliado, senao o criador
+   nunca preenche
+2. adicionar `Bairro is not empty` nas condicoes do W9 passo 4 e do W1 passo 1
 
 ---
 
