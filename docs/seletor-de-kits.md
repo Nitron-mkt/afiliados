@@ -81,6 +81,11 @@ Tres leituras possiveis:
 | `encontrados: 1` e `Gravou: NÃO` | achou o campo mas o valor nao casa com nenhuma opcao da picklist | conferir o passo 1, caractere por caractere |
 | `Gravou: sim` mas chega vazio no contato | o GHL nao esta lendo o campo escondido | por `ESCONDER_ORIGINAL = false` e testar de novo |
 
+Com `DEBUG = true` agora sai tambem um relatorio **no carregamento**, antes de
+qualquer clique. E ele que responde a pergunta que importa primeiro: o script
+achou o campo? Se disser `0 encontrado(s)`, nada mais vai funcionar, e o
+problema esta no passo 2 da instalacao.
+
 O ponto fragil esta isolado numa funcao so: `acharCampos()` procura por
 `[name*=chave]`, `[id*=chave]` e `[data-q*=chave]`. Se o GHL mudar a marcacao
 do formulario, e ali que se corrige — em um lugar, nao espalhado.
@@ -102,9 +107,27 @@ colado dentro de form builder.
 depois deste script rodar. Sem o observer, quem clica rapido perde a escolha.
 Se em 2,5s os campos nao aparecerem, o painel avisa em vez de falhar calado.
 
+**Esconder o campo nao depende de escrever nele.** Na primeira versao os dois
+estavam amarrados: o campo era escondido depois de uma escrita bem-sucedida.
+Isso dava dois defeitos de uma vez — o dropdown ficava visivel ate o criador
+clicar num kit, e ficava visivel **para sempre** se a escrita falhasse. Agora
+`esconderCampos()` roda no carregamento e a cada mudanca no DOM, sem depender
+de clique.
+
+**Esconde com classe e `clip-path`, nao com `display:none`.** Campo
+obrigatorio com `display:none` trava o envio: o navegador tenta focar o campo
+para reclamar, nao consegue porque ele nao existe no layout, e engole o submit
+sem dizer nada. A tecnica usada aqui tira da tela mas mantem o campo focavel
+e enviavel.
+
+**A classe volta sozinha se o GHL redesenhar.** O React do GHL recria os campos
+e limpa atributos. O observer escuta `class` e `style` alem de `childList`, e
+reaplica. Tem uma guarda de reentrada, porque as nossas proprias mudancas
+disparam o observer de volta.
+
 **`ESCONDER_ORIGINAL` sobe na arvore com freio.** Ele so sobe enquanto o
-ancestral contiver apenas aquele campo, entao nao existe o risco de esconder
-meio formulario por causa de um seletor generoso.
+ancestral contiver apenas aquele campo, no maximo tres niveis, entao nao existe
+o risco de esconder meio formulario por causa de um seletor generoso.
 
 **Radio de verdade, nao `div` com `onclick`.** Teclado, `Tab`, leitor de tela e
 `:focus-visible` funcionam sem codigo extra.

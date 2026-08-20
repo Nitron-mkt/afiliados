@@ -156,6 +156,23 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
 @media (prefers-reduced-motion:reduce){#nk-seletor *{transition:none!important}}
 </style>
 
+<style>
+/* Esta regra e a UNICA nao escopada em #nk-seletor, porque o campo do GHL
+   vive fora do nosso bloco. Nome de classe improvavel de colidir.
+
+   Nao usa display:none de proposito. Campo obrigatorio com display:none
+   trava o envio: o navegador tenta focar para reclamar, nao consegue, e
+   engole o submit sem dizer nada. Isto some da tela mas continua focavel
+   e continua sendo enviado. */
+.nk-campo-oculto{
+  position:absolute !important;
+  width:1px !important; height:1px !important;
+  padding:0 !important; margin:-1px !important;
+  overflow:hidden !important; border:0 !important;
+  clip-path:inset(50%) !important; white-space:nowrap !important;
+}
+</style>
+
 <div class="nk-topo">
   <p class="nk-olho">Programa de afiliados</p>
   <h2 class="nk-titulo">Escolha o kit que combina com o seu conteúdo</h2>
@@ -321,21 +338,44 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
     return escreveu;
   }
 
-  function esconder(el){
+  // Sobe do campo ate o involucro que so contem ele, para nao sobrar um
+  // retangulo vazio com o padding do GHL na tela. Para de subir assim que o
+  // ancestral tiver outro campo dentro, entao nao existe o risco de esconder
+  // meio formulario.
+  function involucroDe(el){
     var no = el;
-    for (var i = 0; i < 4; i++){
+    for (var i = 0; i < 3; i++){
       var pai = no.parentElement;
       if (!pai || pai === document.body) break;
       if (pai.querySelectorAll("input,select,textarea").length > 1) break;
       no = pai;
     }
-    no.style.display = "none";
+    return no;
+  }
+
+  // Roda no carregamento e a cada mudanca no DOM, NAO no clique. Antes isto
+  // dependia de uma escrita bem-sucedida: o dropdown ficava visivel ate o
+  // criador clicar num kit, e ficava para sempre se a escrita falhasse. Sao
+  // dois problemas diferentes e nao devem estar amarrados.
+  function esconderCampos(){
+    if (!ESCONDER_ORIGINAL) return 0;
+    var n = 0;
+    [CAMPOS.kit, CAMPOS.marca].forEach(function(chave){
+      acharCampos(chave).forEach(function(el){
+        var inv = involucroDe(el);
+        // O React do GHL redesenha e limpa a classe. Reaplicar e barato.
+        if (!inv.classList.contains("nk-campo-oculto")){
+          inv.classList.add("nk-campo-oculto");
+        }
+        n++;
+      });
+    });
+    return n;
   }
 
   /* ============ APLICACAO ============ */
 
   var pendente = null;      // escolha feita antes de os campos existirem
-  var jaEscondeu = false;
 
   function aplicar(valor, marca){
     var cKit   = acharCampos(CAMPOS.kit);
@@ -345,10 +385,6 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
 
     var ok = escrever(cKit, valor);
     if (cMarca.length) escrever(cMarca, marca);
-
-    if (ok && ESCONDER_ORIGINAL && !jaEscondeu){
-      cKit.forEach(esconder); cMarca.forEach(esconder); jaEscondeu = true;
-    }
 
     pendente = ok ? null : { valor:valor, marca:marca };
     if (DEBUG) relatar(cKit, cMarca, valor, ok);
@@ -367,6 +403,22 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
       }).join(" ") : "") + "<br>" +
       "Campos de marca encontrados: <b>" + cMarca.length + "</b><br>" +
       "Gravou: <b>" + (ok ? "sim" : "NÃO") + "</b>";
+  }
+
+  function relatarCarga(){
+    var cKit = acharCampos(CAMPOS.kit), cMarca = acharCampos(CAMPOS.marca);
+    aviso.classList.remove("nk-oculto");
+    aviso.innerHTML =
+      "<b>Diagnóstico no carregamento</b> (DEBUG = true)<br>" +
+      "Campo <code>" + esc(CAMPOS.kit) + "</code>: <b>" + cKit.length + "</b> encontrado(s)" +
+      (cKit.length ? " &rarr; " + cKit.map(function(e){
+        return "<code>" + esc(e.tagName.toLowerCase() + (e.type ? ":" + e.type : "") +
+               " name=" + (e.getAttribute("name") || "—") +
+               " id=" + (e.getAttribute("id") || "—")) + "</code>";
+      }).join(" ") : " &mdash; <b>é por isto que nada grava</b>") + "<br>" +
+      "Campo <code>" + esc(CAMPOS.marca) + "</code>: <b>" + cMarca.length + "</b> encontrado(s)<br>" +
+      "Escondidos: <b>" + (cKit.length + cMarca.length) + "</b>" +
+      (cKit.length && cKit[0].closest(".nk-campo-oculto") ? " (classe aplicada)" : "");
   }
 
   function modoDemo(valor, marca){
@@ -398,14 +450,28 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
     }
   });
 
-  // O formulario do GHL monta os campos depois deste script rodar. Sem o
-  // observer, quem clica rapido perde a escolha.
+  // Tenta esconder ja, para o caso de os campos existirem antes de nos.
+  esconderCampos();
+  if (DEBUG) relatarCarga();
+
+  // O formulario do GHL monta os campos depois deste script rodar, e o React
+  // dele redesenha depois. O observer cobre as duas coisas: esconde o que
+  // acabou de nascer, reesconde o que foi redesenhado, e reaplica a escolha
+  // de quem clicou antes de os campos existirem.
   if (window.MutationObserver){
+    var trabalhando = false;
     new MutationObserver(function(){
-      if (pendente && aplicar(pendente.valor, pendente.marca)){
-        aviso.classList.add("nk-oculto");
+      if (trabalhando) return;          // as nossas proprias mudancas notificam de volta
+      trabalhando = true;
+      try {
+        esconderCampos();
+        if (pendente && aplicar(pendente.valor, pendente.marca)){
+          aviso.classList.add("nk-oculto");
+        }
+      } finally {
+        trabalhando = false;
       }
-    }).observe(document.documentElement, { childList:true, subtree:true });
+    }).observe(document.documentElement, { childList:true, subtree:true, attributes:true, attributeFilter:["class","style"] });
   }
 })();
 </script>
