@@ -126,8 +126,8 @@ Todos `model: contact`. Estas chaves foram lidas da API: pode colar sem medo.
 | Afiliado — Vende produto fisico | `contact.afiliado__vende_produto_fisico` | SINGLE_OPTIONS | Sim · Nao · Nao identificado |
 | Afiliado na: (vitrine) | `contact.afiliado__vitrine` | SINGLE_OPTIONS | ver divergencia abaixo |
 | Afiliado — Trilha | `contact.afiliado__trilha` | SINGLE_OPTIONS | Achadinhos · Mudanca casa nova · Nicho organizacao · Curadoria teca · Key account |
-| Afiliado — Marca alocada | `contact.afiliado__marca_alocada` | SINGLE_OPTIONS | Nitron · Mundo UD · Teak Brazil |
-| Afiliado — Kit alocado | `contact.afiliado__kit_alocado` | SINGLE_OPTIONS | KIT CHURRASCO · KIT MICRO-ONDAS · KIT MEDICAMENTO |
+| Afiliado — Marca alocada | `contact.afiliado__marca_alocada` | TEXT | Nitron · Mundo UD · Teak Brazil (sem picklist: quem escreve e o seletor) |
+| Afiliado — Kit alocado | `contact.afiliado__kit_alocado` | TEXT | recebe a **referencia** do ERP, ex. `905.K01.999` |
 | Afiliado — Comissao % | `contact.afiliado__comissao_` | NUMERICAL | |
 | Afiliado — Comissao paga | `contact.afiliado__comissao_paga` | MONETORY | |
 | Afiliado — Score | `contact.afiliado__score` | NUMERICAL | placeholder diz "0 a 100" |
@@ -156,29 +156,55 @@ Campos gerais que a jornada usa:
 | WhatsApp | `contact.whatsapp` | campo customizado, separado do phone padrao |
 | **Bairro** | **nao existe** | criar como TEXT, sem prefixo de afiliado. **So pela interface** — ver abaixo |
 
-### Campo recriado em 20/08/2026: Kit alocado
+### Kit e Marca recriados em 20/08/2026 — e a regra que sai disso
 
-`Afiliado — Kit alocado` nasceu como TEXT e foi **apagado e recriado** como
-`SINGLE_OPTIONS`, pela interface, com as tres opcoes do formulario. Duas coisas
-a registrar:
+Os dois campos foram apagados e recriados **duas vezes** no mesmo dia:
+TEXT -> `SINGLE_OPTIONS` -> TEXT. A ida e volta teve motivo: campo
+`SINGLE_OPTIONS` **nao tem a caixa `Oculto`** no editor do formulario, e
+campo de texto tem. Como quem escreve nesses dois campos e o seletor, e nao
+o criador, eles nao precisam de picklist — precisam ficar invisiveis.
 
-| | Antes | Depois |
-|---|---|---|
-| id | `X85LQ2NJm7A8ZpjUGLIo` | **`EdwnNYOZ8DjDA3pcxBVe`** |
-| fieldKey | `contact.afiliado__kit_alocado` | igual |
-| tipo | TEXT | SINGLE_OPTIONS |
+Estado final:
 
-**A chave sobreviveu, o id nao.** Isso e o que importa saber quando alguem
-recria um campo:
+| Campo | id atual | tipo | ids anteriores |
+|---|---|---|---|
+| `Afiliado — Kit alocado` | `XeGF0Od66n8c70ltFBrO` | TEXT | `X85LQ2NJm7A8ZpjUGLIo`, `EdwnNYOZ8DjDA3pcxBVe` |
+| `Afiliado — Marca alocada` | `HaR3w2zhAA2TYjroBAMJ` | TEXT | `qcvIg5mpVpgqUn5yQhRh` |
 
-- o **seletor de kits** casa por chave (`[name*="afiliado__kit_alocado"]`),
-  entao continuou funcionando sem tocar em nada
-- o **`ghl-sync`** escreve por id, entao o id antigo em `ghl_campos` ficou
-  apontando para um campo que nao existe mais. Ja corrigido. Se estivesse
-  `ativo`, teria virado escrita silenciosa no vazio
+**A chave sobreviveu as tres vezes; o id mudou nas tres.** E isso separa as
+duas integracoes:
 
-Regra que sai disto: **recriar campo customizado no GHL exige atualizar
-`ghl_campos`.** Nao ha erro quando o id esta errado — a API aceita e ignora.
+- o **seletor de kits** casa por pedaco de chave (`kit_alocado`), entao
+  atravessou as tres recriacoes sem uma linha de mudanca
+- o **`ghl-sync`** escreve por id, entao cada recriacao deixou o id antigo
+  apontando para um campo que nao existe mais
+
+Regra: **recriar campo customizado no GHL exige atualizar `ghl_campos`.**
+Nao ha erro quando o id esta errado — a API aceita e ignora em silencio. Os
+dois estao com `ativo = false` por decisao de arquitetura, o que por sorte
+tornou as tres trocas inofensivas; se estivessem ligados, seriam tres
+periodos de escrita no vazio.
+
+### Primeiro envio real do formulario — 20/08/2026
+
+Contato `8E3rKOQodCSx5F0NBQh4` (Renan Dan Yamamoto), enviado 14:28. Os dois
+campos chegaram gravados:
+
+| Campo | Valor |
+|---|---|
+| `Afiliado — Kit alocado` | `905.K01.999` |
+| `Afiliado — Marca alocada` | `Teak Brazil` |
+
+O seletor esta provado ponta a ponta: clique no card -> escrita no campo do
+GHL -> submit -> valor no contato.
+
+**O que este teste NAO validou, e por que:** nenhum card foi criado em
+`Afiliados Jornada`. O contato usado ja existia na base como cliente do Clube
+Nitron (Polypus Digital) e tem **CNPJ preenchido** — que e exatamente a trava
+de revendedor do W9 passo 2. Para testar o resto do W9, precisa de um contato
+limpo, sem CNPJ nem codigo de representante, com a tag `afil-teste`.
+
+### Campo de contato nao se cria por API — testado
 
 ### Campo de contato nao se cria por API — testado
 
