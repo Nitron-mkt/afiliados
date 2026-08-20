@@ -1,0 +1,1031 @@
+<title>Programa de Afiliados Nitron</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Karla:wght@400;500;600;700&display=swap">
+
+<style>
+  /* Mesma paleta do seletor de kits: o time ve os dois, e sao um sistema so. */
+  :root{
+    --papel:#F7F7F4; --superficie:#FFFFFF; --fibra:#EDEAE1;
+    --tinta:#1C1B18; --tinta-2:#5F5B51; --tinta-3:#8A857A;
+    --teca:#A0642B; --mata:#2F5D4A; --sangue:#9B3226;
+    --borda:#DEDAD0; --borda-forte:#C9C3B5;
+    --sombra:0 1px 2px rgba(28,27,24,.05), 0 8px 24px -14px rgba(28,27,24,.14);
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --papel:#141412; --superficie:#1C1C19; --fibra:#262622;
+      --tinta:#F2F0EA; --tinta-2:#B4AFA3; --tinta-3:#8A857A;
+      --teca:#D08F4A; --mata:#5C9C7D; --sangue:#D9695A;
+      --borda:#33322D; --borda-forte:#474540;
+      --sombra:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --papel:#141412; --superficie:#1C1C19; --fibra:#262622;
+    --tinta:#F2F0EA; --tinta-2:#B4AFA3; --tinta-3:#8A857A;
+    --teca:#D08F4A; --mata:#5C9C7D; --sangue:#D9695A;
+    --borda:#33322D; --borda-forte:#474540;
+    --sombra:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--papel); color:var(--tinta);
+    font-family:Karla,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+
+  .pagina{
+    max-width:1180px; margin:0 auto;
+    padding:clamp(28px,5vw,64px) clamp(18px,4vw,40px) 96px;
+    display:grid; gap:clamp(28px,4vw,56px); grid-template-columns:1fr;
+  }
+  @media (min-width:1080px){
+    .pagina{grid-template-columns:200px minmax(0,1fr); align-items:start}
+  }
+
+  /* ---- indice lateral ---- */
+  .indice{display:none}
+  @media (min-width:1080px){
+    .indice{
+      display:block; position:sticky; top:40px;
+      font-size:14px; line-height:1.45;
+    }
+    .indice p{
+      font:600 11px/1 Karla,sans-serif; letter-spacing:.14em; text-transform:uppercase;
+      color:var(--tinta-3); margin:0 0 12px;
+    }
+    .indice ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;counter-reset:i}
+    .indice a{
+      color:var(--tinta-2); text-decoration:none; display:flex; gap:9px;
+      border-left:2px solid var(--borda); padding-left:11px;
+      transition:color .15s, border-color .15s;
+    }
+    .indice a::before{counter-increment:i;content:counter(i);color:var(--tinta-3);font-variant-numeric:tabular-nums}
+    .indice a:hover{color:var(--teca);border-color:var(--teca)}
+  }
+
+  main{min-width:0;max-width:74ch}
+
+  /* ---- cabecalho ---- */
+  .capa{margin-bottom:clamp(34px,5vw,58px)}
+  .olho{
+    font:600 11px/1 Karla,sans-serif; letter-spacing:.15em; text-transform:uppercase;
+    color:var(--teca); display:block; margin-bottom:14px;
+  }
+  h1{
+    font-family:"Bricolage Grotesque",Karla,sans-serif; font-weight:700;
+    font-size:clamp(32px,5.6vw,52px); line-height:1.02; letter-spacing:-.028em;
+    margin:0 0 18px; text-wrap:balance;
+  }
+  .resumo{font-size:clamp(18px,2.2vw,21px);line-height:1.5;color:var(--tinta-2);max-width:58ch}
+  .datado{
+    margin-top:22px; padding-top:16px; border-top:1px solid var(--borda);
+    font-size:13.5px; color:var(--tinta-3);
+  }
+
+  h2{
+    font-family:"Bricolage Grotesque",Karla,sans-serif; font-weight:700;
+    font-size:clamp(24px,3.4vw,31px); line-height:1.12; letter-spacing:-.02em;
+    margin:clamp(46px,6vw,68px) 0 16px; text-wrap:balance; scroll-margin-top:28px;
+  }
+  h2 .n{
+    display:block; font-family:Karla,sans-serif; font-weight:600; font-size:11px;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--tinta-3);
+    margin-bottom:9px; letter-spacing:.15em;
+  }
+  h3{
+    font-family:"Bricolage Grotesque",Karla,sans-serif; font-weight:700;
+    font-size:19px; line-height:1.2; margin:34px 0 10px; letter-spacing:-.012em;
+  }
+  h4{font:700 15px/1.3 Karla,sans-serif;margin:24px 0 6px}
+  p{margin:0 0 15px;max-width:66ch}
+  a{color:var(--teca)}
+  strong{font-weight:700}
+  ul,ol{margin:0 0 15px;padding-left:20px;max-width:66ch}
+  li{margin-bottom:6px}
+  li::marker{color:var(--tinta-3)}
+
+  code{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.86em;
+    background:var(--fibra); border:1px solid var(--borda);
+    padding:1px 5px; border-radius:4px; white-space:nowrap;
+  }
+
+  /* ---- tabelas ---- */
+  .rolagem{overflow-x:auto;margin:20px 0 24px;border:1px solid var(--borda);border-radius:10px;background:var(--superficie)}
+  table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--borda);vertical-align:top}
+  th{
+    font:600 11px/1.3 Karla,sans-serif; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--tinta-3); background:var(--fibra); white-space:nowrap;
+  }
+  tr:last-child td{border-bottom:none}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .fita{
+    display:inline-block; font:700 10.5px/1 Karla,sans-serif; letter-spacing:.06em;
+    text-transform:uppercase; padding:4px 7px; border-radius:5px; white-space:nowrap;
+  }
+  .f-ok{background:color-mix(in srgb,var(--mata) 16%,transparent);color:var(--mata)}
+  .f-rascunho{background:var(--fibra);color:var(--tinta-2)}
+  .f-falta{background:color-mix(in srgb,var(--sangue) 15%,transparent);color:var(--sangue)}
+  .f-mao{background:color-mix(in srgb,var(--teca) 16%,transparent);color:var(--teca)}
+
+  /* ---- destaques ---- */
+  .nota{
+    margin:24px 0; padding:16px 18px; border-radius:10px;
+    background:var(--superficie); border:1px solid var(--borda);
+    border-left:3px solid var(--teca);
+  }
+  .nota.perigo{border-left-color:var(--sangue)}
+  .nota.certo{border-left-color:var(--mata)}
+  .nota p:last-child{margin-bottom:0}
+  .nota .rotulo{
+    font:700 11px/1 Karla,sans-serif; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--teca); display:block; margin-bottom:8px;
+  }
+  .nota.perigo .rotulo{color:var(--sangue)}
+  .nota.certo .rotulo{color:var(--mata)}
+
+  .numeros{
+    display:grid; gap:12px; margin:24px 0;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  }
+  .numero{
+    background:var(--superficie); border:1px solid var(--borda); border-radius:10px;
+    padding:14px 16px;
+  }
+  .numero b{
+    display:block; font-family:"Bricolage Grotesque",Karla,sans-serif; font-weight:700;
+    font-size:29px; line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums;
+  }
+  .numero span{display:block;margin-top:5px;font-size:13px;color:var(--tinta-2);line-height:1.35}
+
+  /* ---- figuras ---- */
+  figure{margin:28px 0 30px;max-width:none}
+  figure svg{
+    display:block; width:100%; max-width:100%; height:auto;
+    background:var(--superficie); border:1px solid var(--borda); border-radius:10px;
+    padding:14px 10px;
+  }
+  figcaption{margin-top:11px;font-size:13.5px;line-height:1.5;color:var(--tinta-3);max-width:64ch}
+  .cx{fill:var(--superficie);stroke:currentColor;stroke-width:1.4;opacity:1}
+  .cx-fibra{fill:var(--fibra);stroke:var(--borda-forte);stroke-width:1.4}
+  .rot{font-family:Karla,sans-serif;font-size:12.5px;font-weight:600;fill:var(--tinta)}
+  .rot-p{font-family:Karla,sans-serif;font-size:11px;fill:var(--tinta-3)}
+  .rot-seta{font-family:Karla,sans-serif;font-size:11px;font-weight:600;fill:var(--tinta-2)}
+  .rot-mao{font-family:Karla,sans-serif;font-size:11px;font-weight:700;fill:var(--teca)}
+  .li{stroke:currentColor;stroke-width:1.4;fill:none;opacity:.65}
+  .li-mao{stroke:var(--teca);stroke-width:1.6;fill:none;stroke-dasharray:1 0}
+  .li-volta{stroke:var(--tinta-3);stroke-width:1.4;fill:none;stroke-dasharray:5 4}
+  .li-nao{stroke:var(--tinta-3);stroke-width:1.4;fill:none;stroke-dasharray:3 4;opacity:.7}
+
+  .legenda{
+    display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;
+    font-size:12.5px;color:var(--tinta-3);
+  }
+  .legenda span{display:flex;align-items:center;gap:7px}
+  .legenda i{display:block;width:22px;height:0;border-top:2px solid currentColor}
+  .legenda .l-mao{color:var(--teca)}
+  .legenda .l-tracejado i{border-top-style:dashed}
+
+  hr{border:none;border-top:1px solid var(--borda);margin:44px 0}
+  .fim{margin-top:56px;padding-top:20px;border-top:1px solid var(--borda);font-size:14px;color:var(--tinta-3)}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="pagina">
+
+<nav class="indice" aria-label="Índice">
+  <p>Nesta página</p>
+  <ol>
+    <li><a href="#porque">Por que afiliados</a></li>
+    <li><a href="#caminho">O caminho do dado</a></li>
+    <li><a href="#apify">Apify: a raspagem</a></li>
+    <li><a href="#score">O score e o roteamento</a></li>
+    <li><a href="#keyaccount">Como vira key account</a></li>
+    <li><a href="#jornada">A jornada no GHL</a></li>
+    <li><a href="#workflows">Os workflows, um a um</a></li>
+    <li><a href="#colisoes">As três colisões</a></li>
+    <li><a href="#mao">O que é feito à mão</a></li>
+    <li><a href="#sankhya">Sankhya</a></li>
+    <li><a href="#hoje">Onde estamos hoje</a></li>
+    <li><a href="#glossario">Glossário</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<header class="capa">
+  <span class="olho">Documento interno · Marketing Nitron</span>
+  <h1>Como funciona o programa de afiliados</h1>
+  <p class="resumo">
+    Achamos criadores no TikTok, decidimos quem vale a pena, mandamos uma amostra,
+    e cobramos o vídeo. Este documento explica cada peça dessa frase &mdash; e o
+    que ainda não está pronto.
+  </p>
+  <p class="datado">
+    Atualizado em 19 de agosto de 2026 · Sub-conta GHL <code>Nitron</code> ·
+    Projeto Supabase <code>afiliados</code>
+  </p>
+</header>
+
+<h2 id="porque"><span class="n">Parte 1</span>Por que afiliados, e o que é uma amostra aqui</h2>
+
+<p>
+  Um afiliado é um criador de conteúdo que recebe produto nosso, grava um vídeo
+  usando, e ganha comissão sobre as vendas que vierem pelo link dele. Não é
+  publicidade paga: não pagamos cachê, pagamos comissão sobre venda.
+</p>
+
+<p>
+  A conta é simples e é o que rege todas as decisões deste sistema: cada amostra
+  custa produto mais frete. Se o criador não grava, aquele dinheiro virou nada.
+  Por isso o sistema inteiro é obcecado por duas coisas: <strong>mandar amostra
+  só para quem tem chance real de gravar</strong>, e <strong>cobrar o vídeo de
+  quem recebeu</strong>.
+</p>
+
+<p>
+  Quatro sistemas participam, cada um com um trabalho que os outros não fazem.
+</p>
+
+<h2 id="caminho"><span class="n">Parte 2</span>O caminho do dado</h2>
+
+<figure>
+  <svg viewBox="0 0 980 300" role="img" aria-label="Fluxo entre quatro sistemas: Apify raspa o TikTok e envia por webhook ao Supabase, que classifica e roteia; o Supabase cria contato e card no GoHighLevel; o GoHighLevel conduz a jornada e gera o pedido de amostra; a ligação com o Sankhya, que emite a nota fiscal, ainda não está construída.">
+    <defs>
+      <marker id="p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+      </marker>
+      <marker id="pt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="var(--tinta-3)"/>
+      </marker>
+    </defs>
+
+    <!-- caixas -->
+    <rect class="cx" x="20"  y="96" width="180" height="86" rx="9"/>
+    <text class="rot"   x="110" y="126" text-anchor="middle">Apify</text>
+    <text class="rot-p" x="110" y="145" text-anchor="middle">raspa o TikTok</text>
+    <text class="rot-p" x="110" y="161" text-anchor="middle">roda quando mandamos</text>
+
+    <rect class="cx" x="270" y="96" width="180" height="86" rx="9"/>
+    <text class="rot"   x="360" y="126" text-anchor="middle">Supabase</text>
+    <text class="rot-p" x="360" y="145" text-anchor="middle">dá nota e decide</text>
+    <text class="rot-p" x="360" y="161" text-anchor="middle">quem entra</text>
+
+    <rect class="cx" x="520" y="96" width="180" height="86" rx="9"/>
+    <text class="rot"   x="610" y="126" text-anchor="middle">GoHighLevel</text>
+    <text class="rot-p" x="610" y="145" text-anchor="middle">conduz a conversa</text>
+    <text class="rot-p" x="610" y="161" text-anchor="middle">e a jornada</text>
+
+    <rect class="cx-fibra" x="770" y="96" width="180" height="86" rx="9"/>
+    <text class="rot"   x="860" y="126" text-anchor="middle">Sankhya</text>
+    <text class="rot-p" x="860" y="145" text-anchor="middle">nota fiscal</text>
+    <text class="rot-p" x="860" y="161" text-anchor="middle">e estoque</text>
+
+    <!-- setas -->
+    <line class="li" x1="200" y1="139" x2="262" y2="139" marker-end="url(#p)"/>
+    <text class="rot-seta" x="231" y="128" text-anchor="middle">webhook</text>
+
+    <line class="li" x1="450" y1="139" x2="512" y2="139" marker-end="url(#p)"/>
+    <text class="rot-seta" x="481" y="128" text-anchor="middle">ghl-sync</text>
+
+    <line class="li-nao" x1="700" y1="139" x2="762" y2="139" marker-end="url(#pt)"/>
+    <text class="rot-seta" x="731" y="128" text-anchor="middle">?</text>
+
+    <!-- o que cruza cada fronteira -->
+    <text class="rot-p" x="231" y="196" text-anchor="middle">bio, seguidores,</text>
+    <text class="rot-p" x="231" y="211" text-anchor="middle">vídeos, e-mail</text>
+
+    <text class="rot-p" x="481" y="196" text-anchor="middle">contato, tags,</text>
+    <text class="rot-p" x="481" y="211" text-anchor="middle">card, trilha</text>
+
+    <text class="rot-p" x="731" y="196" text-anchor="middle">pedido da</text>
+    <text class="rot-p" x="731" y="211" text-anchor="middle">amostra</text>
+    <text class="rot-mao" x="731" y="234" text-anchor="middle">não construído</text>
+
+    <!-- rodape do supabase: os quatro destinos -->
+    <text class="rot-p" x="360" y="52" text-anchor="middle">descartado · fila de DM · e-mail · key account</text>
+    <line class="li-volta" x1="360" y1="60" x2="360" y2="88" marker-end="url(#pt)"/>
+  </svg>
+  <figcaption>
+    Cada fronteira carrega uma coisa diferente. Do Apify sai gente; do Supabase
+    sai <em>gente aprovada</em>; do GHL sai um pedido de amostra. A última ponte,
+    que amarraria a amostra à nota fiscal, ainda não existe.
+  </figcaption>
+</figure>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>Sistema</th><th>O trabalho dele</th><th>Por que não dá para tirar</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Apify</strong></td><td>Raspa perfis e vídeos do TikTok por termo de busca e hashtag</td><td>É a única fonte de criadores novos. Sem ele o funil não enche</td></tr>
+    <tr><td><strong>Supabase</strong></td><td>Guarda todo mundo, dá nota, decide o destino de cada um</td><td>É onde a decisão de "vale a pena?" acontece, e onde ela fica registrada</td></tr>
+    <tr><td><strong>GoHighLevel</strong></td><td>Contato, e-mail, WhatsApp, o kanban da jornada</td><td>É por onde a gente <em>conversa</em>. Também é onde a logística da empresa já vive</td></tr>
+    <tr><td><strong>Sankhya</strong></td><td>Nota fiscal e estoque</td><td>Amostra é saída de mercadoria. Sem nota, não sai do galpão</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="nota certo">
+  <span class="rotulo">A regra que separa as duas primeiras peças</span>
+  <p>
+    <strong>O Supabase decide quem entra; o GHL conduz quem entrou.</strong>
+    Enquanto essa linha estiver clara, os dois lados evoluem sem se atropelar.
+    Quando alguém pergunta "isso é no Supabase ou no GHL?", a resposta é: é
+    decisão sobre entrar? Supabase. É conversa com o criador? GHL.
+  </p>
+</div>
+
+<h2 id="apify"><span class="n">Parte 3</span>Apify: de onde vêm os criadores</h2>
+
+<p>
+  O Apify é um raspador. A gente diz "procura no TikTok por <em>achadinhos de
+  cozinha</em>" e ele devolve os vídeos que achou, e junto o perfil de quem
+  postou. Ele roda quando mandamos, não sozinho.
+</p>
+
+<p>De cada criador vem, entre outras coisas:</p>
+
+<ul>
+  <li>o <strong>handle</strong> e o nome de exibição</li>
+  <li><strong>seguidores</strong> e as métricas de cada vídeo (views, likes, comentários, shares)</li>
+  <li>a <strong>bio</strong> e o link da bio &mdash; é daqui que sai quase todo o sinal útil</li>
+  <li>se a conta é <strong>privada</strong>, <strong>verificada</strong>, ou se é <strong>TikTok Seller</strong> (vende produto próprio)</li>
+</ul>
+
+<p>
+  O Apify não entende nada disso: ele só traz. A leitura é toda do Supabase.
+  Uma coisa importante: o Apify <strong>não</strong> traz e-mail em campo
+  próprio. Quando existe e-mail, ele está escrito na bio, e o Supabase precisa
+  achar. Hoje, de 97 criadores raspados, só <strong>12 têm e-mail</strong>. Isso
+  explica muito do desenho que vem a seguir.
+</p>
+
+<h2 id="score"><span class="n">Parte 4</span>O score: como decidimos quem vale a pena</h2>
+
+<p>
+  Todo criador raspado entra no Supabase e recebe uma nota. A nota não mede se a
+  pessoa é boa criadora &mdash; mede uma coisa muito mais específica:
+  <strong>a chance de ela ser afiliada, e não marca</strong>.
+</p>
+
+<p>
+  Essa é a distinção que importa. Um perfil com 200 mil seguidores que vende
+  produto próprio é concorrente, não parceiro. Um perfil com 15 mil que vive de
+  indicar achadinhos é exatamente quem queremos. O score existe para separar os
+  dois, e por isso ele tem pontos negativos.
+</p>
+
+<h3>Os pesos</h3>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>Sinal</th><th class="num">Peso</th><th>O que é, em português</th></tr></thead>
+  <tbody>
+    <tr><td>Vitrine de afiliado</td><td class="num">+4</td><td>O link da bio é <code>collshp.com</code>, Shopee, Amazon, Mercado Livre. Quem tem vitrine <em>já é</em> afiliado de alguém. Sinal mais forte que existe</td></tr>
+    <tr><td>E-mail ou domínio de agência</td><td class="num">+3</td><td>Palavras como <em>agencia</em>, <em>assessoria</em>, <em>colab</em>, <em>talentos</em>, <em>mgmt</em>. Quem tem agência é criador profissional</td></tr>
+    <tr><td>Audiência massiva</td><td class="num">+2</td><td>Acima de 500 mil seguidores</td></tr>
+    <tr><td>Handle de afiliado</td><td class="num">+2</td><td>O @ tem <em>achadinho</em>, <em>achados</em>, <em>indica</em>, <em>comprinha</em>, <em>promo</em>, <em>desconto</em></td></tr>
+    <tr><td>Agregador de link</td><td class="num">+1</td><td><code>linktr.ee</code>, <code>bio.site</code>. Sinal fraco: qualquer um usa</td></tr>
+    <tr><td>Palavra de afiliado na bio</td><td class="num">+1</td><td>Por palavra encontrada, até 3 pontos. <em>cupom</em>, <em>link na bio</em>, <em>recebido</em>, <em>indico</em></td></tr>
+    <tr><td>Conta comercial</td><td class="num">&minus;1</td><td>Marcada como conta comercial no TikTok</td></tr>
+    <tr><td>Bio comercial</td><td class="num">&minus;2</td><td><em>cnpj</em>, <em>orçamento</em>, <em>atacado</em>, <em>revenda</em>, <em>showroom</em>, <em>fabricamos</em></td></tr>
+    <tr><td>TikTok Seller</td><td class="num">&minus;2</td><td>Vende produto próprio na plataforma. É concorrente</td></tr>
+    <tr><td>Domínio próprio</td><td class="num">&minus;3</td><td>O link da bio é um site dele. Quem tem site é marca, não afiliado</td></tr>
+    <tr><td>Handle de marca</td><td class="num">&minus;3</td><td>O @ tem <em>oficial</em>, <em>loja</em>, <em>moveis</em>, <em>marcenaria</em>, <em>fabrica</em>, <em>distribuidora</em></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  A soma vai de <strong>&minus;6 a +8</strong> nos criadores que temos hoje. A
+  única faixa que importa de verdade é o sinal: <strong>score negativo é
+  descarte automático</strong>, porque significa "isto aqui é marca ou
+  concorrente".
+</p>
+
+<div class="nota">
+  <span class="rotulo">Uma exceção que vale entender</span>
+  <p>
+    Domínio próprio normalmente tira 3 pontos. Mas se o domínio é de agência, a
+    penalidade <strong>não</strong> se aplica &mdash; senão a gente descartaria
+    justamente os criadores profissionais, que são os melhores. Um e-mail
+    <code>@agenciacurta.com</code> não é um site de loja.
+  </p>
+</div>
+
+<h3>O roteamento: quatro destinos</h3>
+
+<p>
+  Com a nota na mão, cada criador cai em um de quatro lugares. As regras rodam
+  na ordem abaixo, e a primeira que casar decide:
+</p>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>Destino</th><th>Regra</th><th>O que a gente faz</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Descartado</strong></td>
+      <td>conta privada, <em>ou</em> score negativo, <em>ou</em> menos de 3 mil seguidores, <em>ou</em> engajamento abaixo de 1,5%</td>
+      <td>Nada. Fica registrado com o motivo, para a gente saber por que descartou</td>
+    </tr>
+    <tr>
+      <td><strong>Key account</strong></td>
+      <td>tem sinal de agência <em>ou</em> 500 mil seguidores ou mais</td>
+      <td>Conversa de pessoa, com cachê. Não entra em automação nenhuma</td>
+    </tr>
+    <tr>
+      <td><strong>Apto e-mail</strong></td>
+      <td>passou nos filtros <em>e</em> tem e-mail na bio</td>
+      <td>Vai para o GHL e recebe a sequência de e-mail</td>
+    </tr>
+    <tr>
+      <td><strong>Fila de DM</strong></td>
+      <td>passou nos filtros, mas <em>não</em> tem e-mail</td>
+      <td>Alguém manda DM à mão. Limitado a 30 por dia, de propósito</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="nota perigo">
+  <span class="rotulo">O número que muda o trabalho de todo mundo</span>
+  <p>
+    De 97 criadores, <strong>42 caíram na fila de DM e só 5 no e-mail</strong>.
+    Ou seja: a raspagem do TikTok quase não traz e-mail, e o caminho principal
+    hoje é o trabalho manual de DM, não a automação. Quem imaginou este projeto
+    como "liga e esquece" precisa recalibrar: a automação cuida da <em>minoria</em>
+    dos criadores por enquanto.
+  </p>
+</div>
+
+<p>
+  A fila de DM ser limitada a 30 é escolha, não limitação técnica. Fila infinita
+  não é trabalhada &mdash; 30 é o que uma pessoa dá conta em cerca de duas horas.
+</p>
+
+<h2 id="keyaccount"><span class="n">Parte 5</span>Como alguém vira key account</h2>
+
+<p>
+  Key account é o criador que <strong>não</strong> entra na régua automática.
+  Dois caminhos levam até lá, e qualquer um dos dois basta:
+</p>
+
+<ol>
+  <li>
+    <strong>Sinal de agência.</strong> O e-mail ou o domínio da bio contém
+    <em>agencia</em>, <em>assessoria</em>, <em>colab</em>, <em>talentos</em>,
+    <em>mgmt</em>, <em>management</em>, <em>influencer</em> ou <em>creators</em>.
+    Exemplo real do nosso pool: <code>beatrizcolabs@gmail.com</code> &mdash; o
+    <em>colabs</em> no e-mail entregou.
+  </li>
+  <li>
+    <strong>500 mil seguidores ou mais.</strong> Independente de qualquer outra
+    coisa.
+  </li>
+</ol>
+
+<p>Quando isso acontece, três coisas mudam de uma vez:</p>
+
+<ul>
+  <li>o status vira <code>key_account</code></li>
+  <li>a trilha vira <code>Key account</code></li>
+  <li>no GHL, o card entra direto no estágio <strong>Key Account</strong>, e não em <em>Mapeado</em></li>
+</ul>
+
+<p>
+  Essa última é a parte esperta. O estágio <em>Key Account</em> não é gatilho de
+  nenhuma automação. Então o criador grande simplesmente <strong>não recebe</strong>
+  o e-mail automático oferecendo comissão &mdash; o que seria constrangedor com
+  quem cobra cachê. Ele fica esperando uma pessoa.
+</p>
+
+<div class="nota">
+  <span class="rotulo">Por que agência é ponto positivo, e não negativo</span>
+  <p>
+    Pode parecer que ter agência é ruim, porque encarece. Mas quem tem agência é
+    quem trata criação de conteúdo como profissão: entrega no prazo, sabe fazer
+    briefing, responde e-mail. O sinal é positivo (+3) porque a pessoa é boa.
+    O que muda é só <em>quem</em> fala com ela: um humano, não um workflow.
+  </p>
+</div>
+
+<h2 id="jornada"><span class="n">Parte 6</span>A jornada no GoHighLevel</h2>
+
+<p>
+  Quem passou pelo filtro do Supabase vira um card no kanban
+  <strong>Afiliados Jornada</strong>. Cada coluna é um momento da vida daquele
+  criador com a gente. O diagrama abaixo mostra as colunas e, em cada seta, o
+  que faz o card andar.
+</p>
+
+<figure>
+  <svg viewBox="0 0 980 430" role="img" aria-label="A jornada do afiliado em duas fileiras. Primeira fileira: Mapeado, Qualificado, Contatado, Respondeu, Aceito, movidos pelos workflows W5, W7, W8 e W9. Do Aceito, um movimento manual leva a Amostra solicitada, que começa a segunda fileira, seguida por Amostra recebida, Conteúdo publicado, Convertido e Recorrente. Key Account fica de fora da régua automática. Amostra recebida sem vídeo em 21 dias vai para Inadimplente de conteúdo. Amostra extraviada volta para Aceito.">
+    <defs>
+      <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+      </marker>
+      <marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="var(--teca)"/>
+      </marker>
+      <marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="var(--tinta-3)"/>
+      </marker>
+    </defs>
+
+    <!-- Key account, fora da regua -->
+    <rect class="cx-fibra" x="20" y="18" width="150" height="44" rx="8"/>
+    <text class="rot" x="95" y="38" text-anchor="middle">Key Account</text>
+    <text class="rot-p" x="95" y="53" text-anchor="middle">nenhuma automação</text>
+    <text class="rot-p" x="196" y="44">entra aqui quem tem agência ou 500 mil+</text>
+
+    <!-- FILEIRA 1 -->
+    <rect class="cx" x="20"  y="104" width="150" height="46" rx="8"/>
+    <text class="rot" x="95"  y="132" text-anchor="middle">Mapeado</text>
+
+    <rect class="cx" x="222" y="104" width="150" height="46" rx="8"/>
+    <text class="rot" x="297" y="132" text-anchor="middle">Qualificado</text>
+
+    <rect class="cx" x="424" y="104" width="150" height="46" rx="8"/>
+    <text class="rot" x="499" y="132" text-anchor="middle">Contatado</text>
+
+    <rect class="cx" x="626" y="104" width="150" height="46" rx="8"/>
+    <text class="rot" x="701" y="132" text-anchor="middle">Respondeu</text>
+
+    <rect class="cx" x="828" y="104" width="132" height="46" rx="8"/>
+    <text class="rot" x="894" y="132" text-anchor="middle">Aceito</text>
+
+    <line class="li" x1="170" y1="127" x2="214" y2="127" marker-end="url(#a)"/>
+    <text class="rot-seta" x="192" y="118" text-anchor="middle">W5</text>
+    <line class="li" x1="372" y1="127" x2="416" y2="127" marker-end="url(#a)"/>
+    <text class="rot-seta" x="394" y="118" text-anchor="middle">W7</text>
+    <line class="li" x1="574" y1="127" x2="618" y2="127" marker-end="url(#a)"/>
+    <text class="rot-seta" x="596" y="118" text-anchor="middle">W8</text>
+    <line class="li" x1="776" y1="127" x2="820" y2="127" marker-end="url(#a)"/>
+    <text class="rot-seta" x="798" y="118" text-anchor="middle">W9</text>
+
+    <!-- Aceito -> Amostra solicitada: movimento manual, varre a largura -->
+    <path class="li-mao" d="M894 150 L894 186 L95 186 L95 246" marker-end="url(#am)"/>
+    <text class="rot-mao" x="495" y="178" text-anchor="middle">alguém arrasta o card à mão</text>
+
+    <!-- FILEIRA 2 -->
+    <rect class="cx" x="20"  y="248" width="150" height="46" rx="8"/>
+    <text class="rot" x="95"  y="270" text-anchor="middle">Amostra</text>
+    <text class="rot" x="95"  y="285" text-anchor="middle">solicitada</text>
+
+    <rect class="cx" x="222" y="248" width="150" height="46" rx="8"/>
+    <text class="rot" x="297" y="270" text-anchor="middle">Amostra</text>
+    <text class="rot" x="297" y="285" text-anchor="middle">recebida</text>
+
+    <rect class="cx" x="424" y="248" width="150" height="46" rx="8"/>
+    <text class="rot" x="499" y="270" text-anchor="middle">Conteúdo</text>
+    <text class="rot" x="499" y="285" text-anchor="middle">publicado</text>
+
+    <rect class="cx" x="626" y="248" width="150" height="46" rx="8"/>
+    <text class="rot" x="701" y="276" text-anchor="middle">Convertido</text>
+
+    <rect class="cx" x="828" y="248" width="132" height="46" rx="8"/>
+    <text class="rot" x="894" y="276" text-anchor="middle">Recorrente</text>
+
+    <line class="li" x1="170" y1="271" x2="214" y2="271" marker-end="url(#a)"/>
+    <text class="rot-seta" x="192" y="262" text-anchor="middle">W1·W2</text>
+    <line class="li" x1="372" y1="271" x2="416" y2="271" marker-end="url(#a)"/>
+    <text class="rot-seta" x="394" y="262" text-anchor="middle">postou</text>
+    <line class="li" x1="574" y1="271" x2="618" y2="271" marker-end="url(#a)"/>
+    <text class="rot-seta" x="596" y="262" text-anchor="middle">W6</text>
+    <line class="li" x1="776" y1="271" x2="820" y2="271" marker-end="url(#a)"/>
+    <text class="rot-seta" x="798" y="262" text-anchor="middle">W4</text>
+
+    <!-- extravio: volta para Aceito -->
+    <path class="li-volta" d="M95 248 L95 216 L960 216 L960 150" marker-end="url(#av)"/>
+    <text class="rot-seta" x="700" y="209" text-anchor="middle">amostra voltou · W2b devolve para Aceito</text>
+
+    <!-- inadimplente -->
+    <rect class="cx-fibra" x="222" y="352" width="220" height="46" rx="8"/>
+    <text class="rot" x="332" y="374" text-anchor="middle">Inadimplente de conteúdo</text>
+    <text class="rot-p" x="332" y="389" text-anchor="middle">+ tag afil-bloqueado</text>
+
+    <line class="li" x1="297" y1="294" x2="297" y2="344" marker-end="url(#a)"/>
+    <text class="rot-seta" x="308" y="322" text-anchor="start">W3 · 21 dias sem vídeo</text>
+  </svg>
+  <div class="legenda">
+    <span><i></i> automático, um workflow move</span>
+    <span class="l-mao"><i></i> uma pessoa move</span>
+    <span class="l-tracejado"><i></i> exceção, volta atrás</span>
+  </div>
+  <figcaption>
+    A jornada tem uma única passagem manual obrigatória: sair de <em>Aceito</em>
+    para <em>Amostra solicitada</em>. Isso é de propósito &mdash; é o último
+    ponto em que alguém confere endereço e kit antes de gastar frete.
+  </figcaption>
+</figure>
+
+<h2 id="workflows"><span class="n">Parte 7</span>Os workflows, um a um</h2>
+
+<p>
+  Workflow é uma automação do GHL: <em>quando isso acontecer, faça aquilo</em>.
+  São dez, numerados de W0 a W9 &mdash; a numeração é ordem de construção, não
+  de execução. O card não passa por eles em sequência numérica.
+</p>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>#</th><th>Nome</th><th>Dispara quando</th><th>Situação</th></tr></thead>
+  <tbody>
+    <tr><td><strong>W0</strong></td><td>Importação vira card</td><td>&mdash;</td><td><span class="fita f-falta">não existe</span> substituído pelo <code>ghl-sync</code></td></tr>
+    <tr><td><strong>W1</strong></td><td>Ponte para logística</td><td>card entra em <em>Amostra solicitada</em></td><td><span class="fita f-rascunho">rascunho</span></td></tr>
+    <tr><td><strong>W2</strong></td><td>Amostra entregue</td><td>entrega marcada como <em>Entregue</em></td><td><span class="fita f-ok">no ar</span></td></tr>
+    <tr><td><strong>W2b</strong></td><td>Amostra extraviada</td><td>entrega marcada como <em>Retorno</em></td><td><span class="fita f-ok">no ar</span></td></tr>
+    <tr><td><strong>W3</strong></td><td>Cobrança de conteúdo</td><td>card entra em <em>Amostra recebida</em></td><td><span class="fita f-rascunho">rascunho</span></td></tr>
+    <tr><td><strong>W4</strong></td><td>Trava de reenvio</td><td>card entra em <em>Aceito</em></td><td><span class="fita f-falta">não existe</span></td></tr>
+    <tr><td><strong>W5</strong></td><td>Rede de segurança</td><td>card entra em <em>Mapeado</em></td><td><span class="fita f-ok">no ar</span></td></tr>
+    <tr><td><strong>W6</strong></td><td>Primeira venda</td><td>GMV do afiliado muda</td><td><span class="fita f-falta">não existe</span></td></tr>
+    <tr><td><strong>W7</strong></td><td>Sequência de e-mail</td><td>card entra em <em>Qualificado</em></td><td><span class="fita f-ok">no ar</span> mas ver aviso</td></tr>
+    <tr><td><strong>W8</strong></td><td>Resposta detectada</td><td>criador responde e-mail</td><td><span class="fita f-ok">no ar</span></td></tr>
+    <tr><td><strong>W9</strong></td><td>Formulário recebido</td><td>criador envia o formulário</td><td><span class="fita f-ok">no ar</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>W5 &mdash; Rede de segurança da exclusão</h3>
+<p>
+  Todo card que aparece em <em>Mapeado</em> passa por aqui. O W5 pergunta uma
+  coisa só: <strong>essa pessoa é revendedor nosso?</strong> Se tem CNPJ ou
+  código de representante preenchido, o card é marcado como perdido e alguém é
+  avisado. Se não, o card sobe para <em>Qualificado</em>.
+</p>
+<p>
+  Existe porque um revendedor querendo divulgar produto é outra conversa
+  comercial, com outra margem. Ele não pode entrar como afiliado por engano.
+</p>
+
+<h3>W7 &mdash; Sequência de e-mail</h3>
+<p>
+  Quem chega em <em>Qualificado</em> e tem e-mail recebe uma sequência de três
+  toques, ramificada por trilha (Achadinhos, Mudança casa nova, Curadoria teca,
+  Nicho organização). Quem não tem e-mail ganha a tag <code>afil-sem-email</code>
+  e fica parado ali, esperando DM.
+</p>
+<p>
+  A trilha <em>Curadoria teca</em> sai da sequência no primeiro toque: é
+  negociação com cachê, tratada por pessoa. Quem não responde em 14 dias é
+  marcado como perdido, com motivo <em>Sem resposta</em>.
+</p>
+<div class="nota perigo">
+  <span class="rotulo">Atenção com o W7</span>
+  <p>
+    Este é o único workflow que faz <strong>promessa para fora</strong>: os
+    e-mails citam um percentual de comissão. E o frete das amostras ainda não foi
+    medido, então esse número não está confirmado. O W7 está publicado, mas
+    <strong>nenhum e-mail saiu ainda</strong> &mdash; nada chegou a
+    <em>Qualificado</em> porque o kanban está vazio. Antes do primeiro envio de
+    verdade, a comissão precisa estar travada.
+  </p>
+</div>
+
+<h3>W8 &mdash; Resposta detectada</h3>
+<p>
+  O criador respondeu o e-mail. O card vai para <em>Respondeu</em>, ele sai da
+  sequência do W7 (para nenhuma automação atropelar a conversa) e o time é
+  avisado. A meta de resposta é <strong>4 horas</strong>.
+</p>
+<p>
+  Cuidado embutido: o gatilho é "cliente respondeu e-mail", que vale para
+  <em>qualquer</em> e-mail da empresa. O primeiro passo confere se a pessoa tem
+  a tag <code>afiliado</code>; se não tem, é cliente B2B e o workflow não faz nada.
+</p>
+
+<h3>W9 &mdash; Formulário recebido</h3>
+<p>
+  <strong>É a porta de entrada real do programa.</strong> Todo mundo que chega em
+  <em>Aceito</em> passa por aqui. O formulário é onde o criador dá CPF, endereço,
+  WhatsApp e <strong>escolhe o kit</strong> que quer receber.
+</p>
+<p>O W9 valida, em ordem:</p>
+<ol>
+  <li>é revendedor? (CNPJ ou código de representante) &rarr; descarta</li>
+  <li>está bloqueado? (tag <code>afil-bloqueado</code>) &rarr; avisa e para</li>
+  <li>cadastro completo? (CPF, WhatsApp, CEP, endereço, bairro) &rarr; se falta algo, pede o dado que falta e tenta de novo em 2 dias</li>
+  <li>qual marca? &rarr; aplica a tag da marca</li>
+  <li>define tier <strong>Bronze</strong> e fonte de captação</li>
+  <li>cria ou atualiza o card em <em>Aceito</em> e manda o e-mail de boas-vindas</li>
+</ol>
+<div class="nota certo">
+  <span class="rotulo">Decisão recente: o criador escolhe o próprio kit</span>
+  <p>
+    O kit não é escolhido por nós nem deduzido por algoritmo &mdash; quem escolhe
+    é o criador, no formulário. Duas razões. A primeira: quem conhece a audiência
+    dele é ele, não um classificador lendo bio. A segunda, que importa mais:
+    <strong>quem escolheu tem pele no jogo</strong>. A taxa de vídeo entregue de
+    quem pediu o produto é outra em relação a quem recebeu o que alguém achou que
+    combinava.
+  </p>
+  <p>
+    A marca sai do kit automaticamente, por tabela fixa &mdash; <em>Juta Oval</em>
+    <em>é</em> produto Teak Brazil. Isso não é palpite, é dado, e importa porque
+    marca errada sai como nota fiscal errada.
+  </p>
+</div>
+
+<h3>W1 &mdash; Ponte para logística</h3>
+<p>
+  Alguém arrastou o card para <em>Amostra solicitada</em>. O W1 é o porteiro
+  antes do frete: ele confere quatro coisas antes de gerar o pedido.
+</p>
+<ol>
+  <li><strong>dados de envio completos?</strong> CPF, endereço, CEP, bairro</li>
+  <li><strong>a pessoa está bloqueada?</strong></li>
+  <li><strong>a marca está preenchida?</strong></li>
+  <li><strong>o kit está na lista aprovada?</strong></li>
+</ol>
+<p>
+  Falhou qualquer uma: o card volta para <em>Aceito</em>, ganha a tag
+  <code>afil-devolvido</code> e alguém é avisado do que falta. Passou nas quatro:
+  aí sim ele cria o pedido em <em>Pedidos-Preparacao</em>, aplica a tag
+  <code>amostra-afiliado</code> e anota a data da amostra.
+</p>
+<p>
+  <strong>A ordem importa e não é negociável.</strong> Se a criação do pedido
+  vier antes das validações, a gente gera despacho para endereço vazio e o
+  problema só aparece na expedição.
+</p>
+
+<h3>W2 &mdash; Amostra entregue</h3>
+<p>
+  A entrega foi marcada como <em>Entregue</em>. O card vai para <em>Amostra
+  recebida</em> e, <strong>três horas depois</strong>, o criador recebe um
+  WhatsApp perguntando se chegou tudo certo.
+</p>
+<p>
+  As três horas não são capricho: "Entregue" costuma cair quando o pacote chega
+  na portaria. Mensagem que chega antes da pessoa ter a caixa na mão soa
+  automática.
+</p>
+<div class="nota">
+  <span class="rotulo">Este é o workflow mais perigoso do conjunto</span>
+  <p>
+    O gatilho é <em>toda</em> entrega da Nitron, não só amostra de afiliado. Já
+    entraram <strong>1.223 contatos</strong> nele. O primeiro passo confere a tag
+    <code>amostra-afiliado</code>, e é só isso que impede 1.223 clientes comuns
+    de receberem "e aí, o que você achou do kit?". Já foi verificado: a trava
+    funciona, ninguém indevido recebeu mensagem.
+  </p>
+</div>
+
+<h3>W2b &mdash; Amostra extraviada</h3>
+<p>
+  A entrega voltou. O card volta para <em>Aceito</em>, ganha a tag
+  <code>afil-devolvido</code> e alguém recebe um aviso com endereço, rastreio e
+  um roteiro do que conferir antes de reenviar.
+</p>
+<p>
+  Detalhe que parece burocrático e não é: o card volta para <em>Aceito</em>, e
+  <strong>não</strong> para <em>Amostra solicitada</em>. Se voltasse para
+  <em>Amostra solicitada</em>, o W1 dispararia na hora e geraria um segundo
+  despacho <em>para o mesmo endereço que acabou de falhar</em>. Frete dobrado
+  sem ninguém decidir nada.
+</p>
+<p>
+  E o mais importante: <strong>o criador não sabe que voltou.</strong> Ele está
+  esperando. Vale um WhatsApp no mesmo dia, mesmo sem a solução pronta.
+</p>
+
+<h3>W3 &mdash; Cobrança de conteúdo</h3>
+<p>
+  O criador recebeu a amostra. Agora a gente cobra o vídeo, em três toques ao
+  longo de 21 dias:
+</p>
+<div class="rolagem">
+<table>
+  <thead><tr><th>Dia</th><th>Canal</th><th>O que é</th></tr></thead>
+  <tbody>
+    <tr><td class="num">3</td><td>WhatsApp</td><td>"O que você achou do kit de verdade?" &mdash; pergunta opinião, não cobra</td></tr>
+    <tr><td class="num">7</td><td>E-mail</td><td>Três ideias de roteiro, caso o que travou seja a ideia</td></tr>
+    <tr><td class="num">18</td><td>WhatsApp</td><td>Aviso final: "ainda faz sentido pra você?"</td></tr>
+    <tr><td class="num">21</td><td>&mdash;</td><td>Card vai para <em>Inadimplente de conteúdo</em> e a pessoa é bloqueada</td></tr>
+  </tbody>
+</table>
+</div>
+<p>
+  Antes de cada toque, o workflow confere se o campo <strong>URL do vídeo</strong>
+  ainda está vazio. Se o vídeo saiu, a cobrança para.
+</p>
+<div class="nota perigo">
+  <span class="rotulo">Onde uma pessoa precisa entrar</span>
+  <p>
+    O campo <em>URL do vídeo</em> é preenchido <strong>à mão</strong>. Se o
+    criador postar e ninguém colar o link, o sistema bloqueia um afiliado que
+    cumpriu. Por isso, no dia 18, junto com o aviso final, alguém do time recebe
+    uma notificação dizendo "vou bloquear essa pessoa em 3 dias, confere se ela
+    postou". Esses três dias existem exatamente para isso.
+  </p>
+</div>
+<p>
+  Se o criador combinar uma data ("vou gravar sábado"), alguém aplica a tag
+  <code>afil-conteudo-combinado</code> à mão. Isso tira ele da cobrança sem
+  descartar. <strong>E precisa ser removida depois</strong>, quando o vídeo sair
+  ou a data passar &mdash; senão ele nunca é cobrado nem bloqueado.
+</p>
+
+<h3>W4 &mdash; Trava de reenvio</h3>
+<p>
+  Um card voltou para <em>Aceito</em>. O W4 pergunta: essa pessoa já recebeu
+  amostra nos últimos 90 dias? Se sim, o card vai para <em>Recorrente</em> e
+  alguém decide se manda a segunda &mdash; e o critério é o GMV: se vendeu, vale;
+  se não vendeu, a segunda amostra é frete jogado fora.
+</p>
+<p>
+  O primeiro passo dele, porém, é outro: <strong>se o card tem a tag
+  <code>afil-devolvido</code>, ele remove a tag e encerra</strong>. Sem isso, uma
+  amostra extraviada iria para <em>Recorrente</em> como se o criador fosse um
+  afiliado ativo pedindo a segunda.
+</p>
+
+<h3>W6 &mdash; Primeira venda</h3>
+<p>
+  O GMV acumulado do afiliado passou de zero. O card vai para
+  <em>Convertido</em>, o tier sobe para <strong>Prata</strong> e o time é avisado
+  &mdash; é notícia boa, vale postar na comunidade. Acima de R$ 5 mil, o tier
+  vira <strong>Ouro</strong>.
+</p>
+<p>
+  É o último a construir, porque sem venda acontecendo ele não faz nada. Hoje o
+  GMV não volta automaticamente para o GHL, então este workflow não teria o que
+  observar.
+</p>
+
+<h2 id="colisoes"><span class="n">Parte 8</span>As três colisões</h2>
+
+<p>
+  Três lugares onde um workflow dispara outro sem ninguém mandar. As três
+  produzem o mesmo tipo de erro: frete gasto ou card no lugar errado,
+  descoberto semanas depois. Estão resolvidas, e é bom entender como, porque
+  quem mexer no GHL sem saber disso reabre o problema.
+</p>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>O que acontecia</th><th>Como está resolvido</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Devolver um card para <em>Amostra solicitada</em> fazia o W1 disparar e reenviar amostra para o endereço que acabou de falhar</td>
+      <td>O W2b devolve para <em>Aceito</em>. Alguém corrige o endereço e arrasta de volta à mão. Uma etapa manual, zero frete perdido</td>
+    </tr>
+    <tr>
+      <td>Devolver para <em>Aceito</em> fazia o W4 mandar o card para <em>Recorrente</em>, porque a data da última amostra estava preenchida</td>
+      <td>A tag <code>afil-devolvido</code>. O W4 checa no primeiro passo, remove a tag e encerra. Ela se limpa sozinha &mdash; ninguém aplica nem remove à mão</td>
+    </tr>
+    <tr>
+      <td>No W3, "parar se o criador responder" tirava ele da cobrança sem preencher a URL do vídeo &mdash; e ele nunca era cobrado nem bloqueado</td>
+      <td>A tag manual <code>afil-conteudo-combinado</code>, aplicada só quando alguém combina uma data de verdade. O "parar se responder" fica desligado no W3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="nota perigo">
+  <span class="rotulo">Para quem for construir o W4</span>
+  <p>
+    Hoje o W4 não existe, e isso é seguro <em>por acaso</em>: sem W4, ninguém
+    sequestra card devolvido. O risco aparece no minuto em que ele nascer. Ele
+    <strong>precisa</strong> nascer já com o passo 1 que checa e limpa
+    <code>afil-devolvido</code>, ou a segunda colisão volta na primeira amostra
+    extraviada.
+  </p>
+</div>
+
+<h2 id="mao"><span class="n">Parte 9</span>O que continua sendo feito à mão</h2>
+
+<p>
+  Esta é a parte que mais importa para o dia a dia do time. Automação não
+  substitui nada disto:
+</p>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>Tarefa</th><th>Quando</th><th>Se ninguém fizer</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Trabalhar a fila de DM</strong></td><td>até 30 por dia</td><td>42 criadores qualificados param, e são a maioria do funil</td></tr>
+    <tr><td><strong>Arrastar o card de <em>Aceito</em> para <em>Amostra solicitada</em></strong></td><td>quando o cadastro está completo</td><td>a amostra nunca é pedida</td></tr>
+    <tr><td><strong>Colar a URL do vídeo</strong></td><td>quando o criador posta</td><td>o sistema bloqueia quem cumpriu</td></tr>
+    <tr><td><strong>Aplicar <code>afil-conteudo-combinado</code></strong></td><td>quando alguém combina uma data</td><td>a cobrança continua em cima de quem já respondeu</td></tr>
+    <tr><td><strong>Remover <code>afil-conteudo-combinado</code></strong></td><td>quando o vídeo sai ou a data passa</td><td>o criador nunca mais é cobrado nem bloqueado</td></tr>
+    <tr><td><strong>Confirmar endereço após extravio</strong></td><td>quando a amostra volta</td><td>reenvio para o mesmo endereço errado, frete dobrado</td></tr>
+    <tr><td><strong>Responder o afiliado em até 4h</strong></td><td>quando o W8 avisa</td><td>a conversa esfria justo em quem demonstrou interesse</td></tr>
+    <tr><td><strong>Negociar key account</strong></td><td>quando um entra na fila</td><td>criadores grandes ficam esperando indefinidamente</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="sankhya"><span class="n">Parte 10</span>Sankhya: o pedaço que falta</h2>
+
+<p>
+  O Sankhya é o ERP: emite a nota fiscal e controla o estoque. Amostra é saída de
+  mercadoria como qualquer outra &mdash; sem nota, não sai do galpão.
+</p>
+
+<p>
+  Hoje, quando o W1 aprova uma amostra, ele cria um card no pipeline
+  <strong>Pedidos-Preparacao</strong>, que é o mesmo fluxo que a expedição já
+  usa para pedido normal. A partir dali a amostra de afiliado é tratada como
+  qualquer pedido.
+</p>
+
+<div class="nota">
+  <span class="rotulo">O que não está construído</span>
+  <p>
+    Existe um campo <code>Afiliado — Ref amostra Sankhya</code> no contato, para
+    guardar a referência da nota. Ele está <strong>vazio em todos os
+    contatos</strong>, e nenhuma automação o preenche. Ou seja: a ligação entre
+    "a amostra do criador X" e "a nota fiscal Y" hoje só existe na cabeça de quem
+    despachou.
+  </p>
+  <p>
+    Enquanto isso não fechar, duas coisas ficam difíceis: rastrear o custo real
+    por afiliado, e calcular o ROI da amostra. É a próxima ponte a construir.
+  </p>
+</div>
+
+<p>
+  E é por isso que a <strong>marca alocada</strong> importa tanto e aparece em
+  três validações diferentes: a marca define de qual empresa sai a nota. Marca
+  errada é nota errada, e nota errada é problema fiscal, não problema de
+  marketing.
+</p>
+
+<h2 id="hoje"><span class="n">Parte 11</span>Onde estamos hoje</h2>
+
+<div class="numeros">
+  <div class="numero"><b>97</b><span>criadores raspados</span></div>
+  <div class="numero"><b>110</b><span>vídeos coletados</span></div>
+  <div class="numero"><b>12</b><span>com e-mail na bio</span></div>
+  <div class="numero"><b>2</b><span>rodadas do Apify</span></div>
+</div>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>Destino</th><th class="num">Criadores</th><th>Leitura</th></tr></thead>
+  <tbody>
+    <tr><td>Descartado</td><td class="num">43</td><td>16 audiência pequena, 15 marca ou seller, 12 engajamento baixo</td></tr>
+    <tr><td>Fila de DM</td><td class="num">42</td><td>Qualificados, sem e-mail. É o caminho principal hoje</td></tr>
+    <tr><td>Key account</td><td class="num">6</td><td>Esperando negociação de pessoa</td></tr>
+    <tr><td>Apto e-mail</td><td class="num">5</td><td>Prontos para a sequência automática</td></tr>
+    <tr><td>Já no GHL</td><td class="num">1</td><td>Primeiro criador sincronizado, num teste</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Trilhas: <strong>Achadinhos 67</strong>, <strong>Curadoria teca 23</strong>,
+  <strong>Key account 7</strong>.
+</p>
+
+<p>
+  O kanban de afiliados tem <strong>um card</strong>. O programa não começou de
+  verdade ainda &mdash; a máquina está montada e testada, e falta ligar.
+</p>
+
+<h3>O que falta para ligar</h3>
+<ol>
+  <li><strong>Medir o frete</strong> e travar a comissão. Sem isso o W7 promete um número que não existe. Bloqueio: a coluna de peso dos kits está vazia na planilha &mdash; são 20 células</li>
+  <li><strong>Criar o campo Bairro</strong> no GHL e pôr no formulário. Sem ele o W1 e o W9 não validam endereço</li>
+  <li><strong>Fechar a lista de kits</strong> aprovados no frete, e transformar o campo de kit em lista de opções</li>
+  <li><strong>Construir o W4</strong> antes de publicar o W1, já com a trava da tag</li>
+  <li><strong>Criar cinco tags</strong> que os workflows precisam e ainda não existem</li>
+</ol>
+
+<h2 id="glossario"><span class="n">Parte 12</span>Glossário</h2>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>Termo</th><th>O que quer dizer</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Trilha</strong></td><td>O tipo de conteúdo do criador, deduzido do termo de busca: Achadinhos, Mudança casa nova, Nicho organização, Curadoria teca, Key account. Define qual e-mail ele recebe</td></tr>
+    <tr><td><strong>Vitrine</strong></td><td>Onde o criador já é afiliado: collshp.com, Shopee, Amazon, Mercado Livre. Sinal forte de que ele sabe monetizar</td></tr>
+    <tr><td><strong>Kit</strong></td><td>A caixa de produtos que o criador recebe. Escolhido por ele no formulário</td></tr>
+    <tr><td><strong>Tier</strong></td><td>Bronze na entrada, Prata na primeira venda, Ouro acima de R$ 5 mil de GMV</td></tr>
+    <tr><td><strong>GMV</strong></td><td>Valor total vendido pelo link do afiliado</td></tr>
+    <tr><td><code>afiliado</code></td><td>Marca que aquele contato é um criador do programa. Várias automações checam esta tag antes de agir</td></tr>
+    <tr><td><code>amostra-afiliado</code></td><td>Esse contato tem uma amostra em trânsito. É a trava que protege os 1.223 do W2</td></tr>
+    <tr><td><code>afil-bloqueado</code></td><td>Recebeu amostra e não entregou vídeo. Não recebe mais nada</td></tr>
+    <tr><td><code>afil-devolvido</code></td><td>Aplicada por automação quando um card é devolvido. Limpa-se sozinha. <strong>Nunca aplicar nem remover à mão</strong></td></tr>
+    <tr><td><code>afil-conteudo-combinado</code></td><td>Combinou uma data para gravar. <strong>100% manual, aplicar e remover à mão</strong></td></tr>
+    <tr><td><code>afil-sem-marca</code></td><td>Completou o cadastro sem marca definida. A amostra não pode sair assim</td></tr>
+    <tr><td><code>afil-teste</code></td><td>Contato de teste. Serve para achar e apagar depois, sem contaminar relatório</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="fim">
+  Este documento descreve o estado real do sistema em 19/08/2026, verificado
+  contra o banco e contra a API do GoHighLevel &mdash; não o estado planejado.
+  Onde algo não está construído, está escrito que não está.
+</p>
+
+</main>
+</div>
