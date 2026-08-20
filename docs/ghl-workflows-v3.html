@@ -129,6 +129,13 @@
   .wtrigger dd{margin:0}
 
   hr{border:none;border-top:1px solid var(--borda);margin:40px 0}
+  .msg{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px;
+    line-height:1.6; white-space:pre-wrap; overflow-x:auto;
+    margin:10px 0 18px; padding:15px 17px; border-radius:10px;
+    background:var(--superficie); border:1px solid var(--borda);
+    color:var(--tinta-2);
+  }
   .fim-doc{margin-top:52px;padding-top:18px;border-top:1px solid var(--borda);font-size:14px;color:var(--tinta-3)}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -734,6 +741,73 @@
     reto para <code>Amostra solicitada</code>. <strong>Se ele for para
     <code>Recorrente</code>, o operador está invertido.</strong> É o teste mais
     rápido dos dois sentidos.
+  </p>
+</div>
+
+<h3>Texto da Internal Notification do W4</h3>
+
+<p>
+  Tipo <code class="en">Email</code>, destinatário você. O criador não recebe
+  nada disto.
+</p>
+
+<h4>Assunto</h4>
+<pre class="msg">Afiliado recorrente pedindo amostra: {{contact.first_name}}</pre>
+
+<h4>Corpo</h4>
+<pre class="msg">{{contact.first_name}} voltou para Aceito e ja recebeu amostra nos ultimos
+90 dias. O card foi movido para Recorrente e NAO vai gerar pedido sozinho.
+
+QUEM E
+Handle: {{contact.afiliado__handle_principal}}
+Perfil: {{contact.afiliado__url_do_perfil}}
+Tier: {{contact.afiliado__tier}}
+Marca: {{contact.afiliado__marca_alocada}}
+
+O QUE JA FOI MANDADO
+Amostras enviadas: {{contact.afiliado__qtd_amostras_enviadas}}
+Ultima amostra em: {{contact.afiliado__data_ultima_amostra}}
+Kit da ultima (referencia): {{contact.afiliado__kit_alocado}}
+
+O QUE ELE DEU EM TROCA
+Video: {{contact.afiliado__url_do_video}}
+GMV acumulado: {{contact.afiliado__gmv_acumulado}}
+
+COMO DECIDIR
+O GMV e o criterio. Se ele vendeu, a segunda amostra se paga. Se nao
+vendeu, e frete jogado fora.
+
+Se o campo Video estiver vazio, confira o perfil dele ANTES de concluir
+que nao entregou: esse campo e preenchido a mao, e pode ser que o video
+exista e ninguem tenha colado o link.
+
+Se Amostras enviadas for 3 ou mais, pare e pense. Tres amostras para a
+mesma pessoa sem GMV nao e generosidade, e vazamento.
+
+SE FOR PARA MANDAR
+Arraste o card de Recorrente para Amostra solicitada. O W1 valida
+endereco e kit de novo antes de gerar o pedido.
+
+Nao fazer nada tambem e uma decisao valida: o card fica parado em
+Recorrente e nenhuma amostra sai.</pre>
+
+<div class="nota">
+  <span class="rotulo">Por que o texto é assim</span>
+  <p>
+    <strong>Dois lados separados.</strong> "O que já foi mandado" e "o que ele
+    deu em troca" ficam em blocos distintos, porque a decisão é exatamente
+    comparar os dois — e ela tem que caber em três segundos de leitura.
+  </p>
+  <p>
+    <strong>O campo Video vazio não é veredito.</strong> Ele é preenchido à
+    mão, a mesma fragilidade que o W3 tem. Uma notificação que afirmasse "não
+    entregou" estaria errada em metade dos casos, e você negaria amostra para
+    quem cumpriu. Por isso ela manda conferir o perfil primeiro.
+  </p>
+  <p>
+    <strong>Diz o que acontece se você ignorar.</strong> O card fica em
+    <code>Recorrente</code> e nada sai. Notificação que não diz isso faz a
+    pessoa responder por reflexo em vez de por critério.
   </p>
 </div>
 
