@@ -684,7 +684,11 @@
   </li>
   <li>
     <span class="acao"><code class="en">If/Else</code> — já recebeu amostra recente?</span>
-    <span class="det"><code>Afiliado — Data ultima amostra</code> <code class="en">is not empty</code> <code class="en">AND</code> data nos últimos 90 dias</span>
+    <span class="det">
+      <code>Afiliado — Data ultima amostra</code> ·
+      <code class="en">is</code> ·
+      <code class="en">In the Last</code> · <code>90</code> · <code>Dias</code>
+    </span>
     <div class="ramo">
       <b>SIM:</b> <code class="en">Internal Notification</code> ·
       <code class="en">Update Opportunity</code> → estágio <code>Recorrente</code> · <span class="fim">fim</span>
@@ -692,17 +696,44 @@
     <div class="ramo">
       <b>NÃO:</b> <span class="fim">fim</span> — segue livre para <code>Amostra solicitada</code>
     </div>
+    <div class="ramo">
+      <b>Uma condição só, e não duas.</b> Data vazia não cai dentro de nenhuma
+      janela, então <code class="en">In the Last</code> já é falso para quem
+      nunca recebeu amostra. Somar <code class="en">is not empty</code> não muda
+      resultado nenhum — só adiciona um lugar para errar.
+    </div>
   </li>
 </ol>
 
 <div class="nota">
-  <span class="rotulo">Se não achar o operador de data relativa</span>
+  <span class="rotulo">Escolha do operador de data — verificado em 20/08</span>
   <p>
-    Comparação de data relativa no GHL às vezes não aceita "últimos 90 dias"
-    direto. Nesse caso use <code>Afiliado — Qtd amostras enviadas</code>
-    <code class="en">greater than</code> <code>0</code> como aproximação, e
-    trate os casos na mão. Não é perfeito, mas não trava o progresso — e a
-    notificação te avisa de qualquer forma.
+    O dropdown oferece oito opções e três parecem plausíveis. A certa é
+    <code class="en">In the Last</code>.
+  </p>
+</div>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>Opção</th><th>O que ela faz</th></tr></thead>
+  <tbody>
+    <tr><td><strong><code class="en">In the Last</code> + 90 Dias</strong></td><td>a data cai <strong>dentro</strong> dos últimos 90 dias — <strong>é esta</strong></td></tr>
+    <tr><td><code class="en">Before</code> + 90 Dias</td><td>pega quem recebeu amostra <strong>há mais</strong> de 90 dias — o oposto. É a mais perigosa, porque parece razoável e manda para <code>Recorrente</code> justamente quem <em>pode</em> receber outra</td></tr>
+    <tr><td><code class="en">After</code> + 90 Dias</td><td>data posterior a hoje + 90. Futuro, nunca casa</td></tr>
+    <tr><td><code class="en">In the Next</code> + 90 Dias</td><td>janela futura. Nunca casa para amostra já enviada</td></tr>
+    <tr><td><code class="en">After date</code> / <code class="en">Before date</code></td><td>pedem data fixa. Envelhecem: em três meses estão erradas</td></tr>
+    <tr><td><code class="en">On</code> / <code class="en">Yesterday</code></td><td>dia exato. Não é janela</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="nota perigo">
+  <span class="rotulo">Como conferir que não inverteu</span>
+  <p>
+    Criador novo, com <code>Data ultima amostra</code> vazia, tem que passar
+    reto para <code>Amostra solicitada</code>. <strong>Se ele for para
+    <code>Recorrente</code>, o operador está invertido.</strong> É o teste mais
+    rápido dos dois sentidos.
   </p>
 </div>
 
