@@ -1,3 +1,12 @@
+> **ESTE ARQUIVO É A VERSÃO 2 E ESTÁ SUPERADO.**
+>
+> A versão em uso é `docs/ghl-workflows-v3.html`. Ela reflete: o W0 que não
+> deve ser construído, o kit escolhido pelo criador no formulário, a
+> referência do ERP como valor gravado, o estágio `Key Account`, e os IDs e
+> chaves reais lidos da API.
+>
+> Este arquivo fica no repo como histórico da decisão, não como instrução.
+
 # Workflows W0 a W9 — guia de execução no GHL
 
 Sub-conta **Nitron** `rZ8y7lzqV7fzxsartaX2`

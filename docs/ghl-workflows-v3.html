@@ -1,0 +1,1200 @@
+<title>Workflows W0 a W9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Karla:wght@400;500;600;700&display=swap">
+
+<style>
+  :root{
+    --papel:#F7F7F4; --superficie:#FFFFFF; --fibra:#EDEAE1;
+    --tinta:#1C1B18; --tinta-2:#5F5B51; --tinta-3:#8A857A;
+    --teca:#A0642B; --mata:#2F5D4A; --sangue:#9B3226;
+    --borda:#DEDAD0; --borda-forte:#C9C3B5;
+    --sombra:0 1px 2px rgba(28,27,24,.05), 0 8px 24px -14px rgba(28,27,24,.14);
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --papel:#141412; --superficie:#1C1C19; --fibra:#262622;
+      --tinta:#F2F0EA; --tinta-2:#B4AFA3; --tinta-3:#8A857A;
+      --teca:#D08F4A; --mata:#5C9C7D; --sangue:#D9695A;
+      --borda:#33322D; --borda-forte:#474540;
+      --sombra:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --papel:#141412; --superficie:#1C1C19; --fibra:#262622;
+    --tinta:#F2F0EA; --tinta-2:#B4AFA3; --tinta-3:#8A857A;
+    --teca:#D08F4A; --mata:#5C9C7D; --sangue:#D9695A;
+    --borda:#33322D; --borda-forte:#474540;
+    --sombra:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--papel); color:var(--tinta);
+    font-family:Karla,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:16.5px; line-height:1.62; -webkit-font-smoothing:antialiased;
+  }
+  .pagina{
+    max-width:1220px; margin:0 auto;
+    padding:clamp(26px,5vw,60px) clamp(18px,4vw,40px) 100px;
+    display:grid; gap:clamp(26px,4vw,52px); grid-template-columns:1fr;
+  }
+  @media (min-width:1100px){ .pagina{grid-template-columns:206px minmax(0,1fr); align-items:start} }
+
+  .indice{display:none}
+  @media (min-width:1100px){
+    .indice{display:block; position:sticky; top:36px; font-size:13.5px; line-height:1.4}
+    .indice p{font:600 11px/1 Karla,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--tinta-3);margin:0 0 11px}
+    .indice ul{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:7px}
+    .indice a{color:var(--tinta-2);text-decoration:none;display:block;border-left:2px solid var(--borda);padding-left:10px;transition:color .15s,border-color .15s}
+    .indice a:hover{color:var(--teca);border-color:var(--teca)}
+    .indice .w a{font-weight:600;font-variant-numeric:tabular-nums}
+  }
+  main{min-width:0;max-width:76ch}
+
+  .capa{margin-bottom:clamp(30px,5vw,52px)}
+  .olho{font:600 11px/1 Karla,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:var(--teca);display:block;margin-bottom:13px}
+  h1{font-family:"Bricolage Grotesque",Karla,sans-serif;font-weight:700;font-size:clamp(30px,5.4vw,48px);line-height:1.02;letter-spacing:-.028em;margin:0 0 16px;text-wrap:balance}
+  .resumo{font-size:clamp(17px,2.1vw,20px);line-height:1.5;color:var(--tinta-2);max-width:58ch}
+  .datado{margin-top:20px;padding-top:15px;border-top:1px solid var(--borda);font-size:13.5px;color:var(--tinta-3)}
+
+  h2{font-family:"Bricolage Grotesque",Karla,sans-serif;font-weight:700;font-size:clamp(23px,3.2vw,29px);line-height:1.12;letter-spacing:-.02em;margin:clamp(44px,6vw,64px) 0 14px;text-wrap:balance;scroll-margin-top:26px}
+  h2 .n{display:block;font-family:Karla,sans-serif;font-weight:600;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--tinta-3);margin-bottom:8px}
+  h3{font-family:"Bricolage Grotesque",Karla,sans-serif;font-weight:700;font-size:18px;line-height:1.2;margin:30px 0 9px;letter-spacing:-.012em}
+  h4{font:700 15px/1.3 Karla,sans-serif;margin:22px 0 6px;color:var(--tinta-2)}
+  p{margin:0 0 14px;max-width:68ch}
+  a{color:var(--teca)}
+  ul,ol{margin:0 0 14px;padding-left:21px;max-width:68ch}
+  li{margin-bottom:5px}
+  li::marker{color:var(--tinta-3)}
+
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;background:var(--fibra);border:1px solid var(--borda);padding:1px 5px;border-radius:4px;white-space:nowrap}
+  .en{font-weight:700;color:var(--tinta);background:color-mix(in srgb,var(--teca) 13%,transparent);border-color:color-mix(in srgb,var(--teca) 30%,transparent)}
+
+  .rolagem{overflow-x:auto;margin:18px 0 22px;border:1px solid var(--borda);border-radius:10px;background:var(--superficie)}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:540px}
+  th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--borda);vertical-align:top}
+  th{font:600 10.5px/1.3 Karla,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta-3);background:var(--fibra);white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  .fita{display:inline-block;font:700 10px/1 Karla,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:4px 7px;border-radius:5px;white-space:nowrap}
+  .f-ok{background:color-mix(in srgb,var(--mata) 16%,transparent);color:var(--mata)}
+  .f-rev{background:color-mix(in srgb,var(--teca) 16%,transparent);color:var(--teca)}
+  .f-falta{background:color-mix(in srgb,var(--sangue) 15%,transparent);color:var(--sangue)}
+  .f-nao{background:var(--fibra);color:var(--tinta-2)}
+
+  .nota{margin:20px 0;padding:15px 17px;border-radius:10px;background:var(--superficie);border:1px solid var(--borda);border-left:3px solid var(--teca)}
+  .nota.perigo{border-left-color:var(--sangue)}
+  .nota.certo{border-left-color:var(--mata)}
+  .nota p:last-child{margin-bottom:0}
+  .nota .rotulo{font:700 11px/1 Karla,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--teca);display:block;margin-bottom:7px}
+  .nota.perigo .rotulo{color:var(--sangue)}
+  .nota.certo .rotulo{color:var(--mata)}
+
+  /* passos numerados de workflow */
+  .passos{list-style:none;padding:0;margin:16px 0 20px;counter-reset:passo;max-width:none}
+  .passos > li{
+    counter-increment:passo; position:relative; padding:0 0 0 42px;
+    margin:0 0 18px; min-height:28px;
+  }
+  .passos > li::before{
+    content:counter(passo); position:absolute; left:0; top:0;
+    width:28px; height:28px; border-radius:8px;
+    background:var(--fibra); border:1px solid var(--borda-forte);
+    font:700 13px/26px Karla,sans-serif; text-align:center;
+    color:var(--tinta-2); font-variant-numeric:tabular-nums;
+  }
+  .passos .acao{font-weight:700;display:block;margin-bottom:3px}
+  .passos .det{color:var(--tinta-2);font-size:14.5px;display:block}
+  .passos ul{margin:6px 0 0;padding-left:18px;font-size:14.5px;color:var(--tinta-2)}
+  .passos .ramo{
+    margin:7px 0 0; padding:9px 12px; border-radius:8px;
+    background:var(--fibra); font-size:14px; color:var(--tinta-2);
+  }
+  .passos .ramo b{color:var(--tinta)}
+  .passos .fim{color:var(--sangue);font-weight:700}
+
+  .wcabeca{
+    display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+    margin:clamp(46px,6vw,68px) 0 6px; scroll-margin-top:26px;
+  }
+  .wcabeca h2{margin:0}
+  .wtrigger{
+    margin:10px 0 18px;padding:13px 16px;border-radius:10px;
+    background:var(--fibra);border:1px solid var(--borda);font-size:14.5px;
+  }
+  .wtrigger dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 14px}
+  .wtrigger dt{font:600 10.5px/1.6 Karla,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta-3);white-space:nowrap}
+  .wtrigger dd{margin:0}
+
+  hr{border:none;border-top:1px solid var(--borda);margin:40px 0}
+  .fim-doc{margin-top:52px;padding-top:18px;border-top:1px solid var(--borda);font-size:14px;color:var(--tinta-3)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="pagina">
+
+<nav class="indice" aria-label="Índice">
+  <p>Antes de construir</p>
+  <ul>
+    <li><a href="#mudou">O que mudou na v3</a></li>
+    <li><a href="#convencoes">Convenções de nome</a></li>
+    <li><a href="#pre">Pré-requisitos</a></li>
+    <li><a href="#ordem">Ordem de construção</a></li>
+    <li><a href="#colisoes">As três colisões</a></li>
+    <li><a href="#referencia">Referência rápida</a></li>
+  </ul>
+  <p>Os workflows</p>
+  <ul>
+    <li class="w"><a href="#w0">W0 — não construir</a></li>
+    <li class="w"><a href="#w9">W9 — formulário</a></li>
+    <li class="w"><a href="#w5">W5 — revendedor</a></li>
+    <li class="w"><a href="#w4">W4 — trava reenvio</a></li>
+    <li class="w"><a href="#w1">W1 — logística</a></li>
+    <li class="w"><a href="#w2">W2 — entregue</a></li>
+    <li class="w"><a href="#w2b">W2b — extraviada</a></li>
+    <li class="w"><a href="#w3">W3 — cobrança</a></li>
+    <li class="w"><a href="#w8">W8 — resposta</a></li>
+    <li class="w"><a href="#w7">W7 — e-mail</a></li>
+    <li class="w"><a href="#w6">W6 — 1ª venda</a></li>
+  </ul>
+  <p>Depois</p>
+  <ul>
+    <li><a href="#teste">Teste ponta a ponta</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<header class="capa">
+  <span class="olho">Guia de execução · versão 3</span>
+  <h1>Workflows W0 a W9 no GoHighLevel</h1>
+  <p class="resumo">
+    Passo a passo para construir cada automação da jornada de afiliados.
+    Cada campo aparece com o nome de exibição <em>e</em> a chave exata, e cada
+    ação com o nome em inglês do Workflow Builder.
+  </p>
+  <p class="datado">
+    20 de agosto de 2026 · Sub-conta <code>Nitron</code> ·
+    Substitui a versão 2 · Estado verificado pela API, não planejado
+  </p>
+</header>
+
+<h2 id="mudou"><span class="n">Parte 1</span>O que mudou desde a versão 2</h2>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>#</th><th>Mudança</th><th>Onde bate</th></tr></thead>
+  <tbody>
+    <tr><td class="num">1</td><td><strong>O W0 não deve ser construído.</strong> A edge function <code>ghl-sync</code> já cria contato, tags e card</td><td>W0, W5</td></tr>
+    <tr><td class="num">2</td><td><strong>O criador escolhe o kit no formulário</strong>, e o que fica gravado é a <strong>referência do ERP</strong> (<code>905.K01.999</code>), não o nome</td><td>W9, W1</td></tr>
+    <tr><td class="num">3</td><td><strong>A marca já chega preenchida</strong> pelo formulário, derivada do kit. O W9 não precisa mais decidir marca — só aplicar a tag dela</td><td>W9 passo 5</td></tr>
+    <tr><td class="num">4</td><td><strong>A lista de kits permitidos do W1 passa a comparar referências</strong>, não nomes</td><td>W1 passo 4</td></tr>
+    <tr><td class="num">5</td><td>O pipeline tem um estágio <strong>Key Account</strong> que a v2 não previa. Quem entra lá não passa por automação nenhuma</td><td>W5, W7</td></tr>
+    <tr><td class="num">6</td><td>Os estágios usam <strong>acento</strong>: <code>Inadimplente de conteúdo</code>, <code>Conteúdo publicado</code></td><td>W3</td></tr>
+    <tr><td class="num">7</td><td><code>Afiliado — Kit alocado</code> e <code>Afiliado — Marca alocada</code> são <strong>TEXT</strong> e ficam ocultos no formulário</td><td>W9, W1</td></tr>
+    <tr><td class="num">8</td><td>A trava do W2 foi <strong>verificada</strong>: 1.223 contatos entraram, nenhum indevido recebeu mensagem</td><td>W2</td></tr>
+    <tr><td class="num">9</td><td><code>afil-import</code> passou a existir. Faltam <strong>cinco</strong> tags</td><td>todos</td></tr>
+    <tr><td class="num">10</td><td>O campo <strong><code>Bairro</code> ainda não existe.</strong> Toda validação de endereço está incompleta até ele nascer</td><td>W1, W9</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="convencoes"><span class="n">Parte 2</span>Convenções de nome</h2>
+
+<p>
+  Sua sub-conta está com a interface em <strong>português</strong>, mas o
+  Workflow Builder mantém os nomes de trigger e action em inglês. Neste guia
+  eles aparecem assim: <code class="en">Add Contact Tag</code>. Se algum
+  aparecer traduzido na sua tela, está na <strong>mesma posição da lista</strong>.
+</p>
+
+<p>
+  Campos aparecem sempre com as duas identidades, porque o nome de exibição
+  engana e a chave não:
+</p>
+
+<p style="margin-bottom:22px">
+  <code>Afiliado — Kit alocado</code> · chave <code>contact.afiliado__kit_alocado</code>
+</p>
+
+<div class="nota perigo">
+  <span class="rotulo">Três nomes que enganam</span>
+  <p>
+    <strong>O campo chamado <code>CNPJ</code> tem a chave
+    <code>contact.cpfcnpj</code>.</strong> Não existe campo com chave
+    <code>cnpj</code>. Pegar o errado quebra a trava de revendedor.
+  </p>
+  <p>
+    <strong>O campo de vitrine se chama <code>Afiliado na:</code></strong>,
+    com dois-pontos no nome, e a chave é
+    <code>contact.afiliado__vitrine</code>.
+  </p>
+  <p>
+    <strong><code>WhatsApp</code> é campo customizado</strong>
+    (<code>contact.whatsapp</code>), separado do telefone padrão do contato.
+  </p>
+</div>
+
+<h3>Onde ficam as coisas</h3>
+<div class="rolagem">
+<table>
+  <thead><tr><th>O que</th><th>Caminho</th></tr></thead>
+  <tbody>
+    <tr><td>Criar workflow</td><td><code class="en">Automation</code> → <code class="en">Workflows</code> → <code class="en">+ Create Workflow</code> → <code class="en">Start from Scratch</code></td></tr>
+    <tr><td>Adicionar trigger</td><td>botão <code class="en">Add New Trigger</code> no topo do canvas</td></tr>
+    <tr><td>Adicionar ação</td><td>botão <code class="en">+</code> abaixo do trigger</td></tr>
+    <tr><td>Ligar / desligar</td><td>toggle <code class="en">Draft</code> / <code class="en">Publish</code>, topo direito</td></tr>
+    <tr><td>Reentrada e Stop on Response</td><td>ícone de engrenagem do workflow</td></tr>
+    <tr><td>Tags</td><td><code class="en">Settings</code> → <code class="en">Tags</code></td></tr>
+    <tr><td>Campos customizados</td><td><code class="en">Settings</code> → <code class="en">Custom Fields</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Ações que a v2 chamava pelo nome errado</h3>
+<div class="rolagem">
+<table>
+  <thead><tr><th>Nome errado</th><th>No GHL é</th></tr></thead>
+  <tbody>
+    <tr><td><code>Move Opportunity</code></td><td><code class="en">Update Opportunity</code> — você escolhe pipeline e stage. <strong>Não existe "Move Opportunity"</strong></td></tr>
+    <tr><td><code>Add Tag</code></td><td><code class="en">Add Contact Tag</code></td></tr>
+    <tr><td><code>Update Field</code></td><td><code class="en">Update Contact Field</code></td></tr>
+    <tr><td><code>Remove from Workflow</code></td><td><code class="en">Remove From Workflow</code></td></tr>
+    <tr><td>comentário no card</td><td><code class="en">Internal Notification</code> — é e-mail para você, não comentário</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Condição de campo customizado, passo a passo</h3>
+<ol>
+  <li>no bloco <code class="en">If/Else</code>, categoria → <code class="en">Custom Fields</code></li>
+  <li>procure pelo nome de exibição, ex. <code>Afiliado — Trilha</code></li>
+  <li>operador → <code class="en">is</code> / <code class="en">is empty</code> / <code class="en">is not empty</code> / <code class="en">contains</code></li>
+  <li>valor → digite <strong>exatamente</strong> como está na picklist</li>
+</ol>
+<p>
+  Valor com acento onde a picklist não tem acento é a causa número um de
+  condição que nunca casa.
+</p>
+
+<h2 id="pre"><span class="n">Parte 3</span>Pré-requisitos: faça antes de qualquer workflow</h2>
+
+<h3>1. Criar as cinco tags que faltam</h3>
+<p><code class="en">Settings</code> → <code class="en">Tags</code>:</p>
+<div class="rolagem">
+<table>
+  <thead><tr><th>Tag</th><th>Usada em</th><th>Sem ela</th></tr></thead>
+  <tbody>
+    <tr><td><code>afil-devolvido</code></td><td>W1 rejeições · W2b · W4</td><td>a Colisão 2 acontece na primeira amostra extraviada</td></tr>
+    <tr><td><code>afil-conteudo-combinado</code></td><td>W3, aplicada à mão</td><td>não há como tirar da cobrança quem combinou data</td></tr>
+    <tr><td><code>afil-revendedor</code></td><td>W5</td><td>revendedor barrado não fica marcado</td></tr>
+    <tr><td><code>afil-cadastro-incompleto</code></td><td>W9 passo 4</td><td>não há como achar quem parou no meio do cadastro</td></tr>
+    <tr><td><code>afil-teste</code></td><td>contato de teste</td><td>teste contamina relatório</td></tr>
+  </tbody>
+</table>
+</div>
+<p>
+  Já existem: <code>afiliado</code> <code>afil-import</code>
+  <code>afil-bloqueado</code> <code>amostra-afiliado</code>
+  <code>afil-nitron</code> <code>afil-mundoud</code> <code>afil-teakbr</code>
+  <code>afil-sem-email</code> <code>afil-sem-marca</code>
+</p>
+<p>
+  <strong>Não reaproveite tags parecidas</strong> que já existem na conta:
+  <code>sem-email</code> (sem prefixo), <code>creator_qualificado</code>,
+  <code>teste-creator-piloto</code>, <code>trilho:key-account</code>. Nenhuma
+  é usada pelos W0–W9.
+</p>
+
+<h3>2. Criar o campo Bairro</h3>
+<p>
+  <code class="en">Settings</code> → <code class="en">Custom Fields</code>, na
+  mesma pasta de <code>CPF</code> e <code>CNPJ</code>. Tipo
+  <code class="en">TEXT</code>, nome <strong>Bairro</strong>, sem prefixo de
+  afiliado — serve para a conta toda.
+</p>
+<p>
+  Depois de criar, dois passos que se esquece: <strong>incluir no formulário</strong>
+  de cadastro, e <strong>adicionar a condição</strong> no W9 passo 4 e no W1
+  passo 1. Não dá para criar por API: o GHL só aceita criação de campo para
+  Custom Object e Company, testado.
+</p>
+
+<h3>3. Fechar a lista de kits aprovados</h3>
+<p>
+  O W1 passo 4 compara com <strong>referências</strong>. Hoje o formulário
+  oferece três:
+</p>
+<div class="rolagem">
+<table>
+  <thead><tr><th>Kit</th><th>Referência</th><th>Marca</th><th class="num">Custo</th></tr></thead>
+  <tbody>
+    <tr><td>Churrasco</td><td><code>905.K01.999</code></td><td>Teak Brazil</td><td class="num">64,43</td></tr>
+    <tr><td>Micro-ondas</td><td><code>914.K01.002</code></td><td>Mundo UD</td><td class="num">23,69</td></tr>
+    <tr><td>Frasqueira de Medicamentos</td><td><code>907.K01.999</code></td><td>Mundo UD</td><td class="num">29,30</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="ordem"><span class="n">Parte 4</span>Ordem de construção</h2>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>#</th><th>Workflow</th><th>Estado hoje</th><th>Publicar?</th></tr></thead>
+  <tbody>
+    <tr><td class="num">—</td><td><strong>W0</strong> Importação vira card</td><td><span class="fita f-nao">não existe</span></td><td><strong>não construa</strong></td></tr>
+    <tr><td class="num">1</td><td><strong>W9</strong> Formulário recebido</td><td><span class="fita f-ok">no ar</span></td><td>revisar passos 4 e 5</td></tr>
+    <tr><td class="num">2</td><td><strong>W5</strong> Exclusão de revendedor</td><td><span class="fita f-ok">no ar</span></td><td>conferir só</td></tr>
+    <tr><td class="num">3</td><td><strong>W4</strong> Trava de reenvio</td><td><span class="fita f-falta">não existe</span></td><td><strong>antes do W1</strong></td></tr>
+    <tr><td class="num">4</td><td><strong>W1</strong> Ponte para logística</td><td><span class="fita f-rev">rascunho</span></td><td>depois do Bairro e da lista de kits</td></tr>
+    <tr><td class="num">5</td><td><strong>W2</strong> + <strong>W2b</strong></td><td><span class="fita f-ok">no ar</span></td><td>conferir só</td></tr>
+    <tr><td class="num">6</td><td><strong>W3</strong> Cobrança de conteúdo</td><td><span class="fita f-rev">rascunho</span></td><td>depois das tags</td></tr>
+    <tr><td class="num">7</td><td><strong>W8</strong> Resposta detectada</td><td><span class="fita f-ok">no ar</span></td><td>conferir só</td></tr>
+    <tr><td class="num">8</td><td><strong>W7</strong> Sequência de e-mail</td><td><span class="fita f-ok">no ar</span></td><td><strong>voltar para Draft</strong> até o frete</td></tr>
+    <tr><td class="num">9</td><td><strong>W6</strong> Primeira venda</td><td><span class="fita f-falta">não existe</span></td><td>último, depende de GMV chegar</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="nota perigo">
+  <span class="rotulo">A ordem não é sugestão</span>
+  <p>
+    <strong>O W4 tem que existir antes do W1 ser publicado.</strong> O W1 é
+    quem gera amostra; amostra gera extravio; extravio devolve card para
+    <code>Aceito</code>; e é aí que o W4 age. Publicar o W1 sem o W4 no lugar
+    manda a primeira amostra extraviada para <code>Recorrente</code>, e você
+    não vai entender por quê.
+  </p>
+</div>
+
+<h2 id="colisoes"><span class="n">Parte 5</span>As três colisões</h2>
+
+<p>
+  Três pontos onde um workflow dispara outro sem ninguém mandar. As três
+  produzem o mesmo erro: frete gasto ou card no lugar errado, descoberto
+  semanas depois. Entenda antes de montar, porque quem mexer sem saber reabre
+  o problema.
+</p>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>#</th><th>O que acontece</th><th>A trava</th></tr></thead>
+  <tbody>
+    <tr>
+      <td class="num">1</td>
+      <td>Devolver card para <code>Amostra solicitada</code> faz o W1 disparar e reenviar amostra para o endereço que acabou de falhar</td>
+      <td>O W2b devolve para <code>Aceito</code>, nunca para <code>Amostra solicitada</code>. Alguém corrige o endereço e arrasta de volta à mão</td>
+    </tr>
+    <tr>
+      <td class="num">2</td>
+      <td>Devolver para <code>Aceito</code> faz o W4 mandar o card para <code>Recorrente</code>, porque <code>Data ultima amostra</code> está preenchida</td>
+      <td>A tag <code>afil-devolvido</code>. O W4 checa no <strong>primeiro passo</strong>, remove a tag e encerra. Ela se limpa sozinha</td>
+    </tr>
+    <tr>
+      <td class="num">3</td>
+      <td><code class="en">Stop on Response</code> no W3 tira o criador da cobrança sem preencher a URL do vídeo — e ele nunca é cobrado nem bloqueado</td>
+      <td>A tag manual <code>afil-conteudo-combinado</code>, e <code class="en">Stop on Response</code> <strong>desligado</strong> no W3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="referencia"><span class="n">Parte 6</span>Referência rápida</h2>
+
+<h3>Pipeline Afiliados Jornada</h3>
+<p>ID <code>EbgtwZHPzdflM2Psu5jw</code></p>
+<div class="rolagem">
+<table>
+  <thead><tr><th class="num">Pos</th><th>Estágio</th><th>Quem move para cá</th></tr></thead>
+  <tbody>
+    <tr><td class="num">0</td><td>Mapeado</td><td><code>ghl-sync</code></td></tr>
+    <tr><td class="num">1</td><td>Key Account</td><td><code>ghl-sync</code>, quando é agência ou 500 mil+</td></tr>
+    <tr><td class="num">2</td><td>Qualificado</td><td>W5</td></tr>
+    <tr><td class="num">3</td><td>Contatado</td><td>W7</td></tr>
+    <tr><td class="num">4</td><td>Respondeu</td><td>W8, e o W9 quando o cadastro está incompleto</td></tr>
+    <tr><td class="num">5</td><td>Aceito</td><td>W9, e as rejeições do W1, e o W2b</td></tr>
+    <tr><td class="num">6</td><td>Amostra solicitada</td><td><strong>uma pessoa, à mão</strong></td></tr>
+    <tr><td class="num">7</td><td>Amostra recebida</td><td>W2</td></tr>
+    <tr><td class="num">8</td><td>Convertido</td><td>W6</td></tr>
+    <tr><td class="num">9</td><td>Recorrente</td><td>W4</td></tr>
+    <tr><td class="num">10</td><td>Inadimplente de <strong>conteúdo</strong></td><td>W3, dia 21</td></tr>
+    <tr><td class="num">11</td><td><strong>Conteúdo</strong> publicado</td><td>uma pessoa, quando cola a URL do vídeo</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Outros pipelines</h3>
+<div class="rolagem">
+<table>
+  <thead><tr><th>Pipeline</th><th>Estágio</th><th>Usado por</th></tr></thead>
+  <tbody>
+    <tr><td>Pedidos-Preparacao</td><td>Pedidos a Liberar</td><td>W1 cria o pedido aqui</td></tr>
+    <tr><td>Entregas</td><td>Entregue</td><td>trigger do W2</td></tr>
+    <tr><td>Entregas</td><td>Retorno</td><td>trigger do W2b</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Campos: nome de exibição e chave</h3>
+<div class="rolagem">
+<table>
+  <thead><tr><th>Nome no GHL</th><th>Chave</th><th>Tipo</th><th>Valores</th></tr></thead>
+  <tbody>
+    <tr><td>CNPJ</td><td><code>contact.cpfcnpj</code></td><td>TEXT</td><td>trava de revendedor</td></tr>
+    <tr><td>Codigo Representante</td><td><code>contact.codigo_representante</code></td><td>TEXT</td><td>trava de revendedor</td></tr>
+    <tr><td>CPF</td><td><code>contact.cpf</code></td><td>TEXT</td><td></td></tr>
+    <tr><td>WhatsApp</td><td><code>contact.whatsapp</code></td><td>PHONE</td><td>customizado, não é o phone padrão</td></tr>
+    <tr><td><strong>Bairro</strong></td><td>—</td><td>—</td><td><strong>não existe ainda</strong></td></tr>
+    <tr><td>Afiliado — Kit alocado</td><td><code>contact.afiliado__kit_alocado</code></td><td>TEXT</td><td>referência do ERP, ex. <code>905.K01.999</code></td></tr>
+    <tr><td>Afiliado — Marca alocada</td><td><code>contact.afiliado__marca_alocada</code></td><td>TEXT</td><td>Nitron · Mundo UD · Teak Brazil</td></tr>
+    <tr><td>Afiliado — Trilha</td><td><code>contact.afiliado__trilha</code></td><td>SINGLE_OPTIONS</td><td>Achadinhos · Mudanca casa nova · Nicho organizacao · Curadoria teca · Key account</td></tr>
+    <tr><td>Afiliado — URL do video</td><td><code>contact.afiliado__url_do_video</code></td><td>TEXT</td><td>preenchido <strong>à mão</strong></td></tr>
+    <tr><td>Afiliado — Data ultima amostra</td><td><code>contact.afiliado__data_ultima_amostra</code></td><td>DATE</td><td></td></tr>
+    <tr><td>Afiliado — Qtd amostras enviadas</td><td><code>contact.afiliado__qtd_amostras_enviadas</code></td><td>NUMERICAL</td><td></td></tr>
+    <tr><td>Afiliado — Motivo do descarte</td><td><code>contact.afiliado__motivo_do_descarte</code></td><td>SINGLE_OPTIONS</td><td>Fora do nicho · Engajamento baixo · Sem resposta · Recusou · E revendedor Nitron · Nao vende fisico · Amostra sem video</td></tr>
+    <tr><td>Afiliado — Tier</td><td><code>contact.afiliado__tier</code></td><td>SINGLE_OPTIONS</td><td>Bronze · Prata · Ouro · Black</td></tr>
+    <tr><td>Afiliado — Fonte de captacao</td><td><code>contact.afiliado__fonte_de_captacao</code></td><td>SINGLE_OPTIONS</td><td>TikTok Affiliate Center · YouTube API · Instagram hashtag · Curadoria · Open Collaboration · Indicacao</td></tr>
+    <tr><td>Afiliado — GMV acumulado</td><td><code>contact.afiliado__gmv_acumulado</code></td><td>MONETORY</td><td>trigger do W6</td></tr>
+    <tr><td>Afiliado — Handle principal</td><td><code>contact.afiliado__handle_principal</code></td><td>TEXT</td><td></td></tr>
+    <tr><td>Afiliado — Seguidores</td><td><code>contact.afiliado__seguidores</code></td><td>NUMERICAL</td><td></td></tr>
+    <tr><td>Afiliado — URL do perfil</td><td><code>contact.afiliado__url_do_perfil</code></td><td>TEXT</td><td></td></tr>
+    <tr><td>Afiliado — Codigo de rastreio</td><td><code>contact.afiliado__codigo_de_rastreio</code></td><td>TEXT</td><td></td></tr>
+    <tr><td>Afiliado na: (vitrine)</td><td><code>contact.afiliado__vitrine</code></td><td>SINGLE_OPTIONS</td><td>collshp.com (Shopee) · mycollection.shop · tipfy.pro · Mercado Livre · Amazon · Site proprio · Nenhuma</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Configurações por workflow</h3>
+<div class="rolagem">
+<table>
+  <thead><tr><th>Workflow</th><th><code class="en">Allow Re-Entry</code></th><th><code class="en">Stop on Response</code></th><th><code class="en">Time Window</code></th></tr></thead>
+  <tbody>
+    <tr><td>W9</td><td><strong>ligado</strong></td><td>—</td><td>—</td></tr>
+    <tr><td>W7</td><td>—</td><td><strong>ligado</strong></td><td>opcional</td></tr>
+    <tr><td>W3</td><td>—</td><td><strong>desligado</strong> — ver Colisão 3</td><td>recomendado</td></tr>
+    <tr><td>W2</td><td>—</td><td><strong>ligado</strong></td><td>recomendado</td></tr>
+    <tr><td>demais</td><td>—</td><td>—</td><td>—</td></tr>
+  </tbody>
+</table>
+</div>
+
+<hr>
+
+<div class="wcabeca" id="w0"><h2 style="margin:0"><span class="n">Workflow</span>W0 · Importação vira card</h2></div>
+
+<div class="nota certo">
+  <span class="rotulo">Não construa este</span>
+  <p>
+    A edge function <code>ghl-sync</code> já faz o trabalho dele, e um pouco
+    mais: cria o contato com <code class="en">upsert</code>, aplica
+    <code>afiliado</code> e <code>afil-import</code>, e cria o card — em
+    <code>Mapeado</code>, ou em <code>Key Account</code> quando o roteamento
+    marcou key account, coisa que o W0 não sabia fazer.
+  </p>
+  <p>
+    A trava de revendedor que o W0 faria, o <strong>W5 já repete</strong> como
+    rede de segurança em <code>Mapeado</code>. Construir o W0 agora só cria um
+    segundo lugar onde a mesma lógica pode divergir.
+  </p>
+</div>
+
+<hr>
+
+<div class="wcabeca" id="w9"><h2 style="margin:0"><span class="n">Workflow · construa 1º</span>W9 · Formulário recebido</h2></div>
+
+<p><strong>É a porta de entrada real.</strong> Todo criador que chega em <code>Aceito</code> passa por aqui.</p>
+
+<div class="wtrigger">
+  <dl>
+    <dt>Trigger</dt><dd><code class="en">Form Submitted</code></dd>
+    <dt>Form</dt><dd>o formulário de cadastro de afiliado</dd>
+    <dt>Config</dt><dd><code class="en">Allow Re-Entry</code> <strong>ligado</strong> — o criador pode reenviar depois de completar dados</dd>
+  </dl>
+</div>
+
+<ol class="passos">
+  <li>
+    <span class="acao"><code class="en">Add Contact Tag</code></span>
+    <span class="det">→ <code>afiliado</code></span>
+  </li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — é revendedor?</span>
+    <span class="det">Condição A: <code class="en">Custom Fields</code> → <code>CNPJ</code> (<code>contact.cpfcnpj</code>) → <code class="en">is not empty</code></span>
+    <span class="det">Condição B, operador <code class="en">OR</code>: <code>Codigo Representante</code> (<code>contact.codigo_representante</code>) → <code class="en">is not empty</code></span>
+    <div class="ramo">
+      <b>Ramo SIM:</b>
+      <code class="en">Update Contact Field</code> → <code>Afiliado — Motivo do descarte</code> = <code>E revendedor Nitron</code> ·
+      <code class="en">Add Contact Tag</code> → <code>afil-revendedor</code> ·
+      <code class="en">Update Opportunity</code> → <code class="en">Status</code> = <code class="en">Lost</code> ·
+      <code class="en">Internal Notification</code> · <span class="fim">fim</span>
+    </div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — está bloqueado?</span>
+    <span class="det">Condição: <code class="en">Contact Tag</code> → <code class="en">is</code> → <code>afil-bloqueado</code></span>
+    <div class="ramo"><b>Ramo SIM:</b> <code class="en">Internal Notification</code> · <span class="fim">fim</span></div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — cadastro completo?</span>
+    <span class="det">Todas as condições com <code class="en">AND</code>, todas <code class="en">is not empty</code>:</span>
+    <ul>
+      <li><code>CPF</code> — <code>contact.cpf</code></li>
+      <li><code>WhatsApp</code> — <code>contact.whatsapp</code></li>
+      <li><code class="en">Postal Code</code> — campo padrão do contato</li>
+      <li><code class="en">Address</code> — campo padrão do contato</li>
+      <li><code>Bairro</code> — <strong>só quando o campo existir</strong></li>
+    </ul>
+    <div class="ramo">
+      <b>Ramo NÃO:</b>
+      <code class="en">Add Contact Tag</code> → <code>afil-cadastro-incompleto</code> ·
+      <code class="en">Send Email</code> pedindo o dado que falta ·
+      <code class="en">Update Opportunity</code> → estágio <code>Respondeu</code> ·
+      <code class="en">Wait</code> <code>2 days</code> ·
+      <code class="en">If/Else</code> <code>CPF</code> <code class="en">is empty</code> → segundo toque · <span class="fim">fim</span>
+    </div>
+    <div class="ramo">
+      <b>Ramo SIM:</b> <code class="en">Remove Contact Tag</code> → <code>afil-cadastro-incompleto</code> · segue
+    </div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> com 4 ramos — qual marca?</span>
+    <span class="det">
+      A marca <strong>já chega preenchida</strong> pelo formulário, derivada do
+      kit. Este passo só traduz o campo em tag.
+    </span>
+    <ul>
+      <li><code>Afiliado — Marca alocada</code> <code class="en">is</code> <code>Nitron</code> → <code class="en">Add Contact Tag</code> <code>afil-nitron</code></li>
+      <li><code class="en">is</code> <code>Mundo UD</code> → <code>afil-mundoud</code></li>
+      <li><code class="en">is</code> <code>Teak Brazil</code> → <code>afil-teakbr</code></li>
+      <li><code class="en">Else</code> → <code>afil-sem-marca</code> + <code class="en">Internal Notification</code></li>
+    </ul>
+    <div class="ramo">
+      O ramo <code class="en">Else</code> deixou de ser o caminho normal e virou
+      <b>detector de anomalia</b>: ele só cai ali quem enviou o formulário sem
+      escolher kit. Se essa notificação começar a chegar sempre, o problema
+      está no seletor, não no criador.
+    </div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Update Contact Field</code></span>
+    <span class="det">→ <code>Afiliado — Tier</code> = <code>Bronze</code></span>
+  </li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — fonte de captação vazia?</span>
+    <span class="det"><code>Afiliado — Fonte de captacao</code> <code class="en">is empty</code></span>
+    <div class="ramo"><b>SIM:</b> <code class="en">Update Contact Field</code> → <code>Curadoria</code> &nbsp;·&nbsp; <b>NÃO:</b> nada</div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Create/Update Opportunity</code></span>
+    <span class="det">Pipeline <code>Afiliados Jornada</code> · estágio <code>Aceito</code></span>
+    <span class="det">
+      <code class="en">Create/Update</code> resolve os dois casos: card que já
+      existe é atualizado, e criador que veio por fora (inbound, indicação)
+      ganha um novo.
+    </span>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Send Email</code></span>
+    <span class="det">→ boas-vindas</span>
+  </li>
+</ol>
+
+<div class="nota">
+  <span class="rotulo">Nota de fluxo</span>
+  <p>
+    O passo 8 dispara o W4, porque ele escreve em <code>Aceito</code>. Para
+    criador novo isso é inofensivo: <code>Data ultima amostra</code> está
+    vazia. Para quem reenvia o formulário depois de já ter recebido amostra, o
+    W4 move o card para <code>Recorrente</code> — e nesse caso é o
+    comportamento correto.
+  </p>
+</div>
+
+<hr>
+
+<div class="wcabeca" id="w5"><h2 style="margin:0"><span class="n">Workflow · construa 2º</span>W5 · Exclusão de revendedor</h2></div>
+
+<p>Rede de segurança. Pega card criado por qualquer caminho e faz uma pergunta só: essa pessoa é revendedor nosso?</p>
+
+<div class="wtrigger">
+  <dl>
+    <dt>Trigger</dt><dd><code class="en">Pipeline Stage Changed</code></dd>
+    <dt>Pipeline</dt><dd><code>Afiliados Jornada</code></dd>
+    <dt>Stage</dt><dd><code>Mapeado</code></dd>
+  </dl>
+</div>
+
+<ol class="passos">
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — é revendedor?</span>
+    <span class="det">Mesmas condições do W9 passo 2: <code>contact.cpfcnpj</code> <code class="en">is not empty</code> <code class="en">OR</code> <code>contact.codigo_representante</code> <code class="en">is not empty</code></span>
+    <div class="ramo">
+      <b>Ramo SIM:</b>
+      <code class="en">Update Contact Field</code> → <code>Motivo do descarte</code> = <code>E revendedor Nitron</code> ·
+      <code class="en">Add Contact Tag</code> → <code>afil-revendedor</code> ·
+      <code class="en">Update Opportunity</code> → <code class="en">Status</code> = <code class="en">Lost</code> ·
+      <code class="en">Internal Notification</code> · <span class="fim">fim</span>
+    </div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Update Opportunity</code></span>
+    <span class="det">Pipeline <code>Afiliados Jornada</code> · estágio <code>Qualificado</code></span>
+  </li>
+</ol>
+
+<div class="nota">
+  <span class="rotulo">Por que Key Account não passa por aqui</span>
+  <p>
+    O trigger é <code>Mapeado</code>, e o <code>ghl-sync</code> põe key account
+    direto em <code>Key Account</code>. Então criador grande nunca é promovido
+    para <code>Qualificado</code>, nunca entra no W7, e nunca recebe o e-mail
+    automático de comissão — que seria constrangedor com quem cobra cachê.
+    É de propósito.
+  </p>
+</div>
+
+<hr>
+
+<div class="wcabeca" id="w4"><h2 style="margin:0"><span class="n">Workflow · construa 3º</span>W4 · Trava de reenvio</h2></div>
+
+<p><strong>Construa antes de publicar o W1.</strong> É a peça que faz o W2b funcionar sem estragar nada.</p>
+
+<div class="wtrigger">
+  <dl>
+    <dt>Trigger</dt><dd><code class="en">Pipeline Stage Changed</code></dd>
+    <dt>Pipeline</dt><dd><code>Afiliados Jornada</code></dd>
+    <dt>Stage</dt><dd><code>Aceito</code></dd>
+  </dl>
+</div>
+
+<ol class="passos">
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — foi devolvido por automação?</span>
+    <span class="det">Condição: <code class="en">Contact Tag</code> → <code class="en">is</code> → <code>afil-devolvido</code></span>
+    <div class="ramo">
+      <b>Ramo SIM:</b> <code class="en">Remove Contact Tag</code> → <code>afil-devolvido</code> · <span class="fim">fim</span>
+    </div>
+    <div class="ramo">
+      <b>Este passo é a Colisão 2.</b> Ele encerra o workflow e limpa a tag no
+      mesmo movimento, então nada acumula e ninguém precisa lembrar de remover
+      tag à mão. <b>Se você construir o W4 sem este passo, quebra o W2b.</b>
+    </div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — já recebeu amostra recente?</span>
+    <span class="det"><code>Afiliado — Data ultima amostra</code> <code class="en">is not empty</code> <code class="en">AND</code> data nos últimos 90 dias</span>
+    <div class="ramo">
+      <b>SIM:</b> <code class="en">Internal Notification</code> ·
+      <code class="en">Update Opportunity</code> → estágio <code>Recorrente</code> · <span class="fim">fim</span>
+    </div>
+    <div class="ramo">
+      <b>NÃO:</b> <span class="fim">fim</span> — segue livre para <code>Amostra solicitada</code>
+    </div>
+  </li>
+</ol>
+
+<div class="nota">
+  <span class="rotulo">Se não achar o operador de data relativa</span>
+  <p>
+    Comparação de data relativa no GHL às vezes não aceita "últimos 90 dias"
+    direto. Nesse caso use <code>Afiliado — Qtd amostras enviadas</code>
+    <code class="en">greater than</code> <code>0</code> como aproximação, e
+    trate os casos na mão. Não é perfeito, mas não trava o progresso — e a
+    notificação te avisa de qualquer forma.
+  </p>
+</div>
+
+<hr>
+
+<div class="wcabeca" id="w1"><h2 style="margin:0"><span class="n">Workflow · construa 4º</span>W1 · Ponte para logística</h2></div>
+
+<p>O porteiro antes do frete. Confere quatro coisas <strong>antes</strong> de gerar o pedido.</p>
+
+<div class="wtrigger">
+  <dl>
+    <dt>Trigger</dt><dd><code class="en">Pipeline Stage Changed</code></dd>
+    <dt>Pipeline</dt><dd><code>Afiliados Jornada</code></dd>
+    <dt>Stage</dt><dd><code>Amostra solicitada</code></dd>
+  </dl>
+</div>
+
+<p>
+  Os quatro primeiros passos têm o mesmo ramo de rejeição. Chame de
+  <strong>DEVOLVER</strong> e repita igual nos quatro:
+</p>
+<div class="nota perigo">
+  <span class="rotulo">Ramo DEVOLVER</span>
+  <p>
+    <code class="en">Add Contact Tag</code> → <code>afil-devolvido</code> ·
+    <code class="en">Internal Notification</code> dizendo o que falta ·
+    <code class="en">Update Opportunity</code> → estágio <code>Aceito</code> ·
+    <span class="fim">fim</span>
+  </p>
+  <p>
+    <strong>A tag nos quatro ramos é obrigatória.</strong> Sem ela, todo card
+    barrado por validação vai para <code>Recorrente</code> em vez de ficar
+    parado em <code>Aceito</code> esperando correção. É a Colisão 2.
+  </p>
+</div>
+
+<ol class="passos">
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — dados de envio OK?</span>
+    <span class="det">Todas com <code class="en">AND</code>, todas <code class="en">is not empty</code>: <code>contact.cpf</code> · <code class="en">Address</code> · <code class="en">Postal Code</code> · <code>Bairro</code> quando existir</span>
+    <div class="ramo"><b>NÃO:</b> ramo DEVOLVER</div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — está bloqueado?</span>
+    <span class="det"><code class="en">Contact Tag</code> <code class="en">is</code> <code>afil-bloqueado</code></span>
+    <div class="ramo"><b>SIM:</b> ramo DEVOLVER</div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — marca preenchida?</span>
+    <span class="det"><code>Afiliado — Marca alocada</code> <code class="en">is empty</code></span>
+    <div class="ramo"><b>SIM:</b> ramo DEVOLVER — sem marca a nota sai errada no Sankhya</div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — kit permitido?</span>
+    <span class="det">
+      <code>Afiliado — Kit alocado</code> <code class="en">contains</code>
+      cada referência aprovada, com <code class="en">OR</code> entre elas:
+    </span>
+    <ul>
+      <li><code>905.K01.999</code> — Churrasco</li>
+      <li><code>914.K01.002</code> — Micro-ondas</li>
+      <li><code>907.K01.999</code> — Frasqueira de Medicamentos</li>
+    </ul>
+    <div class="ramo"><b>NÃO:</b> ramo DEVOLVER, com notificação "kit fora da faixa de margem"</div>
+    <div class="ramo">
+      <b>Compare referências, não nomes.</b> O campo recebe
+      <code>905.K01.999</code>, não <code>KIT CHURRASCO</code>. Kit novo
+      liberado no frete = uma condição nova aqui.
+    </div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Create/Update Opportunity</code></span>
+    <span class="det">Pipeline <code>Pedidos-Preparacao</code> · estágio <code>Pedidos a Liberar</code></span>
+    <span class="det">Nome: <code>AMOSTRA - {{contact.first_name}} - {{contact.afiliado__kit_alocado}}</code></span>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Add Contact Tag</code></span>
+    <span class="det">→ <code>amostra-afiliado</code> — é esta tag que o W2 e o W2b checam</span>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Update Contact Field</code></span>
+    <ul>
+      <li><code>Afiliado — Data ultima amostra</code> = data de hoje</li>
+      <li><code>Afiliado — Qtd amostras enviadas</code> = valor atual + 1</li>
+    </ul>
+  </li>
+</ol>
+
+<div class="nota perigo">
+  <span class="rotulo">A ordem dos passos não é negociável</span>
+  <p>
+    Passos 1 a 4 vêm <strong>antes</strong> do 5. Invertido, você gera pedido
+    de amostra para endereço vazio e o problema aparece na expedição, com o
+    pacote na mão de alguém.
+  </p>
+</div>
+
+<hr>
+
+<div class="wcabeca" id="w2"><h2 style="margin:0"><span class="n">Workflow · construa 5º</span>W2 · Amostra entregue</h2></div>
+
+<div class="wtrigger">
+  <dl>
+    <dt>Trigger</dt><dd><code class="en">Pipeline Stage Changed</code></dd>
+    <dt>Pipeline</dt><dd><code>Entregas</code></dd>
+    <dt>Stage</dt><dd><code>Entregue</code></dd>
+    <dt>Config</dt><dd><code class="en">Stop on Response</code> <strong>ligado</strong></dd>
+  </dl>
+</div>
+
+<ol class="passos">
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — é amostra de afiliado?</span>
+    <span class="det"><code class="en">Contact Tag</code> <code class="en">is</code> <code>amostra-afiliado</code></span>
+    <div class="ramo"><b>NÃO:</b> <span class="fim">fim</span> — é entrega de cliente comum</div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Update Opportunity</code></span>
+    <span class="det">Pipeline <code>Afiliados Jornada</code> · estágio <code>Amostra recebida</code></span>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Wait</code></span>
+    <span class="det">→ <code>3 hours</code></span>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Send WhatsApp</code></span>
+    <span class="det">Ou <code class="en">Send SMS</code> se o canal de WhatsApp não estiver configurado. Texto: perguntar se chegou tudo certo, sem citar o nome do kit</span>
+  </li>
+</ol>
+
+<div class="nota perigo">
+  <span class="rotulo">O passo 1 é o mais importante do conjunto</span>
+  <p>
+    Este trigger dispara em <strong>toda entrega da Nitron</strong>, não só
+    amostra de afiliado. Já entraram <strong>1.223 contatos</strong>. É só a
+    checagem da tag que impede 1.223 clientes comuns de receberem "e aí, o que
+    você achou do kit?".
+  </p>
+  <p>
+    <strong>Verificado em 19/08:</strong> a trava funciona. Zero contatos com a
+    tag <code>amostra-afiliado</code>, zero cards em <code>Afiliados Jornada</code>
+    vindos daqui, zero mensagens de saída. Ninguém indevido recebeu nada.
+  </p>
+</div>
+
+<p>
+  <strong>Por que o <code class="en">Wait</code> de 3 horas:</strong> "Entregue"
+  costuma cair quando o pacote chega na portaria. Mensagem que chega antes da
+  pessoa ter a caixa na mão soa automática.
+</p>
+
+<hr>
+
+<div class="wcabeca" id="w2b"><h2 style="margin:0"><span class="n">Workflow · construa 5º</span>W2b · Amostra extraviada</h2></div>
+
+<div class="wtrigger">
+  <dl>
+    <dt>Trigger</dt><dd><code class="en">Pipeline Stage Changed</code></dd>
+    <dt>Pipeline</dt><dd><code>Entregas</code></dd>
+    <dt>Stage</dt><dd><code>Retorno</code></dd>
+  </dl>
+</div>
+
+<ol class="passos">
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — é amostra de afiliado?</span>
+    <span class="det"><code class="en">Contact Tag</code> <code class="en">is</code> <code>amostra-afiliado</code></span>
+    <div class="ramo"><b>NÃO:</b> <span class="fim">fim</span></div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Add Contact Tag</code></span>
+    <span class="det">→ <code>afil-devolvido</code> — <strong>antes</strong> de mover o card</span>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Internal Notification</code></span>
+    <span class="det">Com endereço, rastreio, quantas amostras já foram, e o roteiro do que conferir antes de reenviar</span>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Update Opportunity</code></span>
+    <span class="det">Pipeline <code>Afiliados Jornada</code> · estágio <code>Aceito</code></span>
+  </li>
+</ol>
+
+<div class="nota">
+  <span class="rotulo">As duas decisões que parecem burocracia e não são</span>
+  <p>
+    <strong>Volta para <code>Aceito</code>, não para <code>Amostra
+    solicitada</code>.</strong> Se voltasse para <code>Amostra solicitada</code>,
+    o W1 dispararia na hora e geraria um segundo despacho para o endereço que
+    acabou de falhar. Frete dobrado sem ninguém decidir nada. É a Colisão 1.
+  </p>
+  <p>
+    <strong>A tag vem antes do card se mover.</strong> Sem ela, o W4 dispara ao
+    ver a mudança para <code>Aceito</code> e manda o card para
+    <code>Recorrente</code>, como se o criador fosse afiliado ativo pedindo a
+    segunda amostra. É a Colisão 2.
+  </p>
+</div>
+
+<p>
+  <strong>O que uma pessoa faz depois:</strong> confirma o endereço com o
+  criador, corrige no contato, arrasta o card para
+  <code>Amostra solicitada</code>. O W1 roda com dado limpo.
+  <strong>O criador não sabe que voltou</strong> — vale um WhatsApp no mesmo
+  dia, mesmo sem a solução pronta.
+</p>
+
+<hr>
+
+<div class="wcabeca" id="w3"><h2 style="margin:0"><span class="n">Workflow · construa 6º</span>W3 · Cobrança de conteúdo</h2></div>
+
+<div class="wtrigger">
+  <dl>
+    <dt>Trigger</dt><dd><code class="en">Pipeline Stage Changed</code></dd>
+    <dt>Pipeline</dt><dd><code>Afiliados Jornada</code></dd>
+    <dt>Stage</dt><dd><code>Amostra recebida</code></dd>
+    <dt>Config</dt><dd><code class="en">Stop on Response</code> <strong>DESLIGADO</strong> · <code class="en">Time Window</code> recomendado</dd>
+  </dl>
+</div>
+
+<p>
+  <strong>A condição de cobrança</strong> é a mesma nos quatro
+  <code class="en">If/Else</code>. Monte uma vez e repita:
+</p>
+<div class="nota">
+  <span class="rotulo">Condição "precisa cobrar?"</span>
+  <p>
+    <code class="en">Custom Fields</code> → <code>Afiliado — URL do video</code>
+    → <code class="en">is empty</code><br>
+    <code class="en">AND</code> <code class="en">Contact Tag</code> →
+    <code class="en">is not</code> → <code>afil-conteudo-combinado</code>
+  </p>
+  <p>
+    Se sua conta não tiver o operador <code class="en">is not</code> para tag,
+    monte como dois <code class="en">If/Else</code> em série: primeiro checa a
+    tag e encerra se existir, depois checa o campo.
+  </p>
+</div>
+
+<ol class="passos">
+  <li><span class="acao"><code class="en">Wait</code> <code>3 days</code></span></li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> "precisa cobrar?"</span>
+    <div class="ramo"><b>SIM:</b> <code class="en">Send WhatsApp</code> — pergunta o que achou do kit, não cobra vídeo &nbsp;·&nbsp; <b>NÃO:</b> <span class="fim">fim</span></div>
+  </li>
+  <li><span class="acao"><code class="en">Wait</code> <code>4 days</code></span></li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> "precisa cobrar?"</span>
+    <div class="ramo"><b>SIM:</b> <code class="en">Send Email</code> — três ideias de roteiro &nbsp;·&nbsp; <b>NÃO:</b> <span class="fim">fim</span></div>
+  </li>
+  <li><span class="acao"><code class="en">Wait</code> <code>11 days</code></span></li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> "precisa cobrar?"</span>
+    <div class="ramo">
+      <b>SIM:</b> <code class="en">Send WhatsApp</code> aviso final ·
+      <b>e também</b> <code class="en">Internal Notification</code>
+      "vou bloquear em 3 dias, confere se ele postou"
+    </div>
+    <div class="ramo"><b>NÃO:</b> <span class="fim">fim</span></div>
+  </li>
+  <li><span class="acao"><code class="en">Wait</code> <code>3 days</code></span></li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> "precisa cobrar?"</span>
+    <div class="ramo">
+      <b>SIM:</b>
+      <code class="en">Update Opportunity</code> → estágio <code>Inadimplente de conteúdo</code> ·
+      <code class="en">Add Contact Tag</code> → <code>afil-bloqueado</code> ·
+      <code class="en">Update Contact Field</code> → <code>Motivo do descarte</code> = <code>Amostra sem video</code>
+    </div>
+    <div class="ramo"><b>NÃO:</b> <span class="fim">fim</span></div>
+  </li>
+</ol>
+
+<div class="nota perigo">
+  <span class="rotulo">A notificação do passo 6 não é opcional</span>
+  <p>
+    O campo <code>URL do video</code> é preenchido <strong>à mão</strong>. Se o
+    criador postar e ninguém colar o link, o W3 bloqueia um afiliado que
+    cumpriu — e você descobre meses depois, quando ele reclamar. Os três dias
+    entre o aviso e o corte existem exatamente para alguém conferir.
+  </p>
+</div>
+
+<p>
+  <strong>Alternância de canal.</strong> Toque 1 e 3 por WhatsApp, toque 2 por
+  e-mail. Se mandar nos dois canais em cada toque, o criador recebe seis
+  mensagens em 21 dias e a última é um bloqueio.
+</p>
+<p>
+  <strong>No teste, troque os <code class="en">Wait</code> para minutos.</strong>
+  Depois volte para dias. Testar isso em 21 dias reais é inviável.
+</p>
+<p>
+  <strong>Quando alguém combinar uma data</strong>, aplique
+  <code>afil-conteudo-combinado</code> à mão. E <strong>remova</strong> quando
+  o vídeo sair ou a data passar — se esquecer, o criador nunca mais é cobrado
+  nem bloqueado.
+</p>
+
+<hr>
+
+<div class="wcabeca" id="w8"><h2 style="margin:0"><span class="n">Workflow · construa 7º</span>W8 · Resposta detectada</h2></div>
+
+<div class="wtrigger">
+  <dl>
+    <dt>Trigger</dt><dd><code class="en">Customer Replied</code></dd>
+    <dt>Canal</dt><dd><code class="en">Email</code></dd>
+  </dl>
+</div>
+
+<ol class="passos">
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — é afiliado?</span>
+    <span class="det"><code class="en">Contact Tag</code> <code class="en">is</code> <code>afiliado</code></span>
+    <div class="ramo"><b>NÃO:</b> <span class="fim">fim</span> — é cliente B2B respondendo, não mexe</div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Update Opportunity</code></span>
+    <span class="det">Pipeline <code>Afiliados Jornada</code> · estágio <code>Respondeu</code></span>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Remove From Workflow</code></span>
+    <span class="det">→ selecione o <strong>W7 pelo nome exato</strong></span>
+  </li>
+  <li>
+    <span class="acao"><code class="en">Internal Notification</code></span>
+    <span class="det">Com handle, seguidores, engajamento, trilha e vitrine. Meta de resposta: <strong>4 horas</strong></span>
+  </li>
+</ol>
+
+<div class="nota">
+  <span class="rotulo">Cuidado com versões do W7</span>
+  <p>
+    Se existirem <code>W7 v2</code>, <code>W7 teste</code> e afins, o contato
+    pode estar numa versão que o passo 3 não remove. <strong>Mantenha um W7
+    só.</strong> Existe hoje um <code>New Workflow : 1786716077172</code> em
+    rascunho, criado em 14/08 — vale apagar.
+  </p>
+</div>
+
+<hr>
+
+<div class="wcabeca" id="w7"><h2 style="margin:0"><span class="n">Workflow · construa 8º</span>W7 · Sequência de e-mail</h2></div>
+
+<div class="nota perigo">
+  <span class="rotulo">Volte este para Draft</span>
+  <p>
+    O W7 está <code class="en">published</code>. É o único workflow que faz
+    <strong>promessa para fora</strong>: os e-mails citam um percentual de
+    comissão, e o frete das amostras ainda não foi medido.
+  </p>
+  <p>
+    Nenhum e-mail saiu ainda — nada chegou a <code>Qualificado</code> porque o
+    kanban está vazio. Mas ele dispara no primeiro <code>ghl-sync</code> real.
+    <strong>Volte para <code class="en">Draft</code> até a comissão estar
+    travada.</strong>
+  </p>
+</div>
+
+<div class="wtrigger">
+  <dl>
+    <dt>Trigger</dt><dd><code class="en">Pipeline Stage Changed</code></dd>
+    <dt>Pipeline</dt><dd><code>Afiliados Jornada</code></dd>
+    <dt>Stage</dt><dd><code>Qualificado</code></dd>
+    <dt>Config</dt><dd><code class="en">Stop on Response</code> <strong>ligado</strong></dd>
+  </dl>
+</div>
+
+<ol class="passos">
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — tem e-mail?</span>
+    <span class="det"><code class="en">Contact</code> → <code class="en">Email</code> → <code class="en">is empty</code></span>
+    <div class="ramo">
+      <b>SIM:</b> <code class="en">Add Contact Tag</code> → <code>afil-sem-email</code> ·
+      <span class="fim">fim</span> — fica em <code>Qualificado</code> e vai para a fila de DM
+    </div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> com 4 ramos — qual trilha?</span>
+    <ul>
+      <li><code>Afiliado — Trilha</code> <code class="en">is</code> <code>Achadinhos</code> → <code class="en">Send Email</code> template A1</li>
+      <li><code class="en">is</code> <code>Mudanca casa nova</code> → template B1</li>
+      <li><code class="en">is</code> <code>Curadoria teca</code> → template D1 → <code class="en">Update Opportunity</code> <code>Contatado</code> → <span class="fim">fim</span></li>
+      <li><code class="en">Else</code> → template C1 — pega <code>Nicho organizacao</code> e trilha vazia</li>
+    </ul>
+    <div class="ramo">
+      <code>Curadoria teca</code> sai no primeiro toque de propósito: é
+      negociação com cachê, tratada por pessoa.
+    </div>
+  </li>
+  <li><span class="acao"><code class="en">Update Opportunity</code> → estágio <code>Contatado</code></span></li>
+  <li><span class="acao"><code class="en">Wait</code> <code>4 days</code></span></li>
+  <li><span class="acao"><code class="en">If/Else</code> — segundo toque por trilha (A2, B2 ou C2)</span></li>
+  <li><span class="acao"><code class="en">Wait</code> <code>5 days</code></span></li>
+  <li><span class="acao"><code class="en">If/Else</code> — terceiro toque (A3, B3 ou C3)</span></li>
+  <li><span class="acao"><code class="en">Wait</code> <code>5 days</code></span></li>
+  <li><span class="acao"><code class="en">Update Contact Field</code> → <code>Motivo do descarte</code> = <code>Sem resposta</code></span></li>
+  <li><span class="acao"><code class="en">Update Opportunity</code> → <code class="en">Status</code> = <code class="en">Lost</code></span></li>
+</ol>
+
+<p>
+  <strong>Antes de publicar:</strong> frete medido, comissão real travada,
+  formulário no ar, W8 funcionando, e três envios manuais feitos. O A/B de
+  assunto sai desses três primeiros.
+</p>
+
+<hr>
+
+<div class="wcabeca" id="w6"><h2 style="margin:0"><span class="n">Workflow · construa 9º</span>W6 · Primeira venda</h2></div>
+
+<div class="wtrigger">
+  <dl>
+    <dt>Trigger</dt><dd><code class="en">Contact Changed</code></dd>
+    <dt>Filtro</dt><dd><code>Afiliado — GMV acumulado</code> — <code>contact.afiliado__gmv_acumulado</code></dd>
+  </dl>
+</div>
+
+<ol class="passos">
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — GMV maior que zero?</span>
+    <span class="det"><code>Afiliado — GMV acumulado</code> <code class="en">greater than</code> <code>0</code></span>
+    <div class="ramo">
+      <b>SIM:</b> <code class="en">Update Opportunity</code> → estágio <code>Convertido</code> ·
+      <code class="en">Update Contact Field</code> → <code>Tier</code> = <code>Prata</code> ·
+      <code class="en">Internal Notification</code> — é notícia boa, vale postar na comunidade
+    </div>
+  </li>
+  <li>
+    <span class="acao"><code class="en">If/Else</code> — passou de 5 mil?</span>
+    <span class="det"><code class="en">greater than</code> <code>5000</code> → <code class="en">Update Contact Field</code> → <code>Tier</code> = <code>Ouro</code></span>
+  </li>
+</ol>
+
+<p>
+  <strong>É o último a construir.</strong> Hoje o GMV não volta
+  automaticamente do Sankhya nem do Shopify para o GHL, então este workflow
+  não teria o que observar. Construa quando o GMV chegar.
+</p>
+
+<hr>
+
+<h2 id="teste"><span class="n">Parte 7</span>Teste ponta a ponta</h2>
+
+<p>
+  Crie um contato de teste com a tag <code>afil-teste</code>. Ele precisa ser
+  <strong>limpo</strong>: sem CNPJ, sem código de representante, e que não
+  exista antes na base — senão ele cai na trava de revendedor e você testa só
+  o primeiro passo.
+</p>
+
+<div class="nota">
+  <span class="rotulo">Foi exatamente o que aconteceu no teste de 20/08</span>
+  <p>
+    O contato usado já existia como cliente do Clube Nitron e tinha CNPJ
+    preenchido. Os campos de kit e marca gravaram certo, mas nenhum card
+    nasceu em <code>Afiliados Jornada</code> — e não havia como saber se foi a
+    trava funcionando ou o W9 não disparando.
+  </p>
+</div>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>Passo</th><th>Esperado</th></tr></thead>
+  <tbody>
+    <tr><td>Enviar o formulário sem escolher kit</td><td>W9 vai para <code>Aceito</code> com a tag <code>afil-sem-marca</code> e você recebe notificação</td></tr>
+    <tr><td>Enviar formulário sem CPF</td><td>W9 vai para <code>Respondeu</code> com <code>afil-cadastro-incompleto</code></td></tr>
+    <tr><td>Enviar formulário completo, com kit</td><td>W9 vai para <code>Aceito</code>; <code>Kit alocado</code> tem a referência e <code>Marca alocada</code> tem a marca</td></tr>
+    <tr><td>Preencher CNPJ e reenviar</td><td>W9 barra, marca <code class="en">Lost</code>, aplica <code>afil-revendedor</code></td></tr>
+    <tr><td><strong>Mover para <code>Amostra solicitada</code> com endereço vazio</strong></td><td>W1 devolve para <code>Aceito</code>, aplica <code>afil-devolvido</code>, e o card <strong>fica em <code>Aceito</code></strong> — não vai para <code>Recorrente</code></td></tr>
+    <tr><td>Preencher endereço e mover de novo</td><td>W1 cria card em <code>Pedidos-Preparacao</code> e aplica <code>amostra-afiliado</code></td></tr>
+    <tr><td><strong>Mover o card de Entregas para <code>Retorno</code></strong></td><td>W2b devolve para <code>Aceito</code> e o card <strong>fica lá</strong> — nenhum pedido novo, nenhum card em <code>Recorrente</code></td></tr>
+    <tr><td>Mover para <code>Amostra solicitada</code> de novo</td><td>W1 cria o pedido normalmente</td></tr>
+    <tr><td>Mover o card de Entregas para <code>Entregue</code></td><td>W2 move para <code>Amostra recebida</code> e manda WhatsApp 3h depois</td></tr>
+    <tr><td>Esperar, com <code class="en">Wait</code> em minutos</td><td>W3 manda os três toques, te notifica, e só então bloqueia</td></tr>
+    <tr><td><strong>Repetir o W3 com <code>afil-conteudo-combinado</code> aplicada</strong></td><td>nenhuma mensagem sai, nenhum bloqueio acontece</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  <strong>As três linhas em negrito são o teste das colisões.</strong> Se
+  qualquer uma falhar, pare: é sinal de que a tag <code>afil-devolvido</code>
+  não está no lugar certo, ou que o W4 nasceu sem o passo 1.
+</p>
+
+<p>Ao terminar, <strong>apague o contato de teste</strong>. A tag <code>afil-teste</code> serve para achá-lo.</p>
+
+<p class="fim-doc">
+  Versão 3 · 20 de agosto de 2026. Substitui a versão 2. Todos os IDs, chaves
+  e estados de workflow foram lidos da API do GoHighLevel, não deduzidos.
+  Onde algo não existe, está escrito que não existe.
+</p>
+
+</main>
+</div>
