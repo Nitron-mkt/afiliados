@@ -127,7 +127,7 @@ Todos `model: contact`. Estas chaves foram lidas da API: pode colar sem medo.
 | Afiliado na: (vitrine) | `contact.afiliado__vitrine` | SINGLE_OPTIONS | ver divergencia abaixo |
 | Afiliado — Trilha | `contact.afiliado__trilha` | SINGLE_OPTIONS | Achadinhos · Mudanca casa nova · Nicho organizacao · Curadoria teca · Key account |
 | Afiliado — Marca alocada | `contact.afiliado__marca_alocada` | SINGLE_OPTIONS | Nitron · Mundo UD · Teak Brazil |
-| Afiliado — Kit alocado | `contact.afiliado__kit_alocado` | TEXT | |
+| Afiliado — Kit alocado | `contact.afiliado__kit_alocado` | SINGLE_OPTIONS | KIT CHURRASCO · KIT MICRO-ONDAS · KIT MEDICAMENTO |
 | Afiliado — Comissao % | `contact.afiliado__comissao_` | NUMERICAL | |
 | Afiliado — Comissao paga | `contact.afiliado__comissao_paga` | MONETORY | |
 | Afiliado — Score | `contact.afiliado__score` | NUMERICAL | placeholder diz "0 a 100" |
@@ -155,6 +155,30 @@ Campos gerais que a jornada usa:
 | Codigo Representante | `contact.codigo_representante` | trava de revendedor do W0/W5/W9 |
 | WhatsApp | `contact.whatsapp` | campo customizado, separado do phone padrao |
 | **Bairro** | **nao existe** | criar como TEXT, sem prefixo de afiliado. **So pela interface** — ver abaixo |
+
+### Campo recriado em 20/08/2026: Kit alocado
+
+`Afiliado — Kit alocado` nasceu como TEXT e foi **apagado e recriado** como
+`SINGLE_OPTIONS`, pela interface, com as tres opcoes do formulario. Duas coisas
+a registrar:
+
+| | Antes | Depois |
+|---|---|---|
+| id | `X85LQ2NJm7A8ZpjUGLIo` | **`EdwnNYOZ8DjDA3pcxBVe`** |
+| fieldKey | `contact.afiliado__kit_alocado` | igual |
+| tipo | TEXT | SINGLE_OPTIONS |
+
+**A chave sobreviveu, o id nao.** Isso e o que importa saber quando alguem
+recria um campo:
+
+- o **seletor de kits** casa por chave (`[name*="afiliado__kit_alocado"]`),
+  entao continuou funcionando sem tocar em nada
+- o **`ghl-sync`** escreve por id, entao o id antigo em `ghl_campos` ficou
+  apontando para um campo que nao existe mais. Ja corrigido. Se estivesse
+  `ativo`, teria virado escrita silenciosa no vazio
+
+Regra que sai disto: **recriar campo customizado no GHL exige atualizar
+`ghl_campos`.** Nao ha erro quando o id esta errado — a API aceita e ignora.
 
 ### Campo de contato nao se cria por API — testado
 
