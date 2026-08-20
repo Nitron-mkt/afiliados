@@ -9,8 +9,11 @@
   cadastro de afiliado no GoHighLevel.
 
   Grava dois campos customizados quando o criador clica num kit:
-    Afiliado — Kit alocado     <- nome do kit
+    Afiliado — Kit alocado     <- REFERENCIA do ERP, ex. 905.K01.999
     Afiliado — Marca alocada   <- marca, derivada do kit
+
+  Grava a referencia, nao o nome. O nome do kit muda com o tempo; a
+  referencia nao, e e por ela que o Sankhya identifica o produto.
 
   Procura os campos por PEDACO de chave (kit_alocado, marca_alocada),
   nao pela chave inteira. O GHL tem duas chaves para o mesmo campo:
@@ -19,10 +22,10 @@
 
   INSTALACAO EM 3 PASSOS: ver docs/seletor-de-kits.md
 
-  PARA TROCAR OS KITS: edite a lista KITS abaixo. O `valor` tem
-  que ser IGUAL a opcao cadastrada na picklist do GHL.
-  A tabela com os 20 kits da planilha esta em
-  docs/seletor-de-kits.md, para copiar de la quando abrir mais.
+  PARA TROCAR OS KITS: edite a lista KITS abaixo. Se o campo do GHL
+  for lista suspensa, a `ref` tem que estar cadastrada na picklist;
+  se for texto, nao precisa de nada. A tabela com os 20 kits e suas
+  referencias esta em docs/seletor-de-kits.md.
 
   SE NAO GRAVAR: DEBUG = true e recarregue o formulario.
   ============================================================
@@ -124,9 +127,17 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
 .nk-check svg{width:15px;height:15px;stroke:#fff;stroke-width:2.5;fill:none}
 
 .nk-info{padding:15px 16px 17px;display:flex;flex-direction:column;gap:10px;flex:1}
+.nk-cabeca{display:flex;flex-direction:column;gap:3px}
 .nk-nome{
   font-family:"Bricolage Grotesque",Karla,sans-serif;font-weight:700;
   font-size:19px;line-height:1.14;letter-spacing:-.012em;
+}
+/* A referencia e o que de fato e gravado. Monoespacada e com digito tabular
+   porque codigo se le caractere por caractere, nao como palavra. */
+.nk-ref{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:12.5px;letter-spacing:.02em;color:var(--tinta-3);
+  font-variant-numeric:tabular-nums;
 }
 .nk-itens{list-style:none;display:flex;flex-direction:column;gap:5px;padding:0}
 .nk-itens li{font-size:13.5px;line-height:1.4;color:var(--tinta-2);padding-left:14px;position:relative}
@@ -144,6 +155,10 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
 .nk-barra[data-escolhido="true"]{border-color:var(--mata)}
 .nk-barra-rotulo{font:600 11px/1 Karla,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-3)}
 .nk-barra-valor{font-family:"Bricolage Grotesque",Karla,sans-serif;font-weight:700;font-size:17px;line-height:1.2}
+.nk-barra-valor code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;
+  font-weight:400;color:var(--tinta-2);
+}
 .nk-barra[data-escolhido="false"] .nk-barra-valor{color:var(--tinta-3);font-weight:500}
 
 .nk-aviso{
@@ -229,20 +244,24 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
   };
 
   /* ============ OS KITS ============
-     `valor`  o que vai gravado. IGUAL a opcao da picklist do GHL.
+     `ref`    a referencia do ERP. E ISTO que vai gravado no campo.
+              O nome do kit muda com o tempo; a referencia nao. E e por ela
+              que o Sankhya identifica o produto, entao e ela que amarra a
+              amostra a nota fiscal.
+     `nome`   so para o criador ler. Trocar aqui nao afeta nada a jusante.
      `marca`  derivada do kit, nao do nicho: e a marca que emite a nota.
      `foto`   URL da imagem. Vazio mostra bloco tramado com o nome.        */
   var KITS = [
     {
       nome:  "Churrasco",
-      valor: "KIT CHURRASCO",
+      ref:   "905.K01.999",
       marca: "Teak Brazil",
       itens: ["Tábua de corte em teca com gaveta", "Petisqueira de teca com 3 molheiras"],
       foto:  ""
     },
     {
       nome:  "Micro-ondas",
-      valor: "KIT MICRO-ONDAS",
+      ref:   "914.K01.002",
       marca: "Mundo UD",
       itens: ["Caçarola para micro-ondas com cesto", "Cook freezer com cesto",
               "Tampa para micro-ondas", "Omeleteira para micro-ondas"],
@@ -250,7 +269,7 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
     },
     {
       nome:  "Frasqueira de Medicamentos",
-      valor: "KIT MEDICAMENTO",
+      ref:   "907.K01.999",
       marca: "Mundo UD",
       itens: ["Frasqueira de medicamentos 1,4L", "Frasqueira de medicamentos mega luxo",
               "Organiza tudo com 7 divisórias"],
@@ -278,7 +297,7 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
       : '<div class="nk-sem-foto"><span>' + esc(kit.nome) + '</span></div>';
 
     return '<label class="nk-card">' +
-      '<input type="radio" name="nk-kit" value="' + esc(kit.valor) + '" data-i="' + i + '">' +
+      '<input type="radio" name="nk-kit" value="' + esc(kit.ref) + '" data-i="' + i + '">' +
       '<div class="nk-corpo">' +
         '<div class="nk-foto">' + foto +
           '<span class="nk-marca">' + esc(kit.marca) + '</span>' +
@@ -287,7 +306,10 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
           '</span>' +
         '</div>' +
         '<div class="nk-info">' +
-          '<h3 class="nk-nome">' + esc(kit.nome) + '</h3>' +
+          '<div class="nk-cabeca">' +
+            '<h3 class="nk-nome">' + esc(kit.nome) + '</h3>' +
+            '<p class="nk-ref">' + esc(kit.ref) + '</p>' +
+          '</div>' +
           '<ul class="nk-itens">' +
             kit.itens.map(function(it){ return "<li>" + esc(it) + "</li>"; }).join("") +
           '</ul>' +
@@ -455,7 +477,10 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
 
     var kit = KITS[Number(r.getAttribute("data-i"))];
     barra.setAttribute("data-escolhido", "true");
-    barraVal.textContent = kit.nome + " · " + kit.marca;
+    // innerHTML e nao textContent, para a referencia sair monoespacada como
+    // no card. Os dois valores passam por esc(): a lista de kits e nossa,
+    // mas nao e razao para abrir excecao no escape.
+    barraVal.innerHTML = esc(kit.nome) + " <code>" + esc(kit.ref) + "</code>";
 
     if (!aplicar(r.value, kit.marca) && !DEBUG){
       // Os campos podem nao ter montado ainda. O observer cuida disso; se em

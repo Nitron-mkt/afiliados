@@ -8,6 +8,38 @@ Hoje traz **tres kits**: Churrasco, Micro-ondas e Frasqueira de Medicamentos.
 A tabela com os 20 kits da planilha esta no fim deste arquivo, para copiar de
 la quando abrir mais.
 
+## O que e gravado: a referencia, nao o nome
+
+O campo recebe **`905.K01.999`**, nao `KIT CHURRASCO`. Duas razoes, e a segunda
+e a que importa:
+
+1. **O nome do kit muda; a referencia nao.** "Frasqueira de Medicamentos" pode
+   virar "Kit Farmacia" amanha. Se o nome estiver gravado em centenas de
+   contatos, virou historico sujo.
+2. **O Sankhya identifica produto por referencia.** Gravar a referencia e o que
+   torna possivel amarrar *a amostra do criador X* a *nota fiscal Y* — a ponte
+   com o ERP que ainda nao existe. Com o nome gravado, essa ponte precisaria de
+   uma tabela de traducao no meio, que e mais um lugar para divergir.
+
+O placeholder original do campo no GHL era `902.K01.M00`. A intencao sempre foi
+essa; o nome foi um desvio.
+
+O card mostra as duas coisas: o nome grande, para o criador escolher, e a
+referencia embaixo em monoespacada. O criador ignora a referencia, e quem for
+conferir o contato depois reconhece.
+
+### O que muda a jusante
+
+| Onde | Antes | Agora |
+|---|---|---|
+| W1 passo 4, lista de kits permitidos | comparar com `KIT CHURRASCO` | comparar com `905.K01.999` |
+| Notificacao "Kit nao permitido" | mostra o nome | mostra a referencia |
+| Se o campo voltar a ser lista suspensa | opcoes = nomes | opcoes = **referencias** |
+
+A notificacao interna passar a mostrar codigo em vez de nome e o unico custo
+real. Se incomodar, a tabela de referencias no fim deste arquivo resolve na
+consulta — ou trocamos o texto da notificacao para citar os dois.
+
 ## Por que precisa de campo customizado
 
 O bloco de HTML **nao envia nada** por conta propria. Ele nao faz parte do
