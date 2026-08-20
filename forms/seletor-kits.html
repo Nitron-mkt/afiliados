@@ -9,8 +9,13 @@
   cadastro de afiliado no GoHighLevel.
 
   Grava dois campos customizados quando o criador clica num kit:
-    afiliado__kit_alocado    <- nome do kit
-    afiliado__marca_alocada  <- marca, derivada do kit
+    Afiliado — Kit alocado     <- nome do kit
+    Afiliado — Marca alocada   <- marca, derivada do kit
+
+  Procura os campos por PEDACO de chave (kit_alocado, marca_alocada),
+  nao pela chave inteira. O GHL tem duas chaves para o mesmo campo:
+  a fieldKey da API e a "Chave de consulta" do formulario, e a segunda
+  carrega o travessao do nome do campo. Pedaco casa com as duas.
 
   INSTALACAO EM 3 PASSOS: ver docs/seletor-de-kits.md
 
@@ -207,9 +212,20 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
   var ESCONDER_ORIGINAL = true;
 
   // Pedaco da chave dos campos customizados no GHL.
+  //
+  // De proposito SEM o prefixo `afiliado__`. O GHL tem duas chaves para o
+  // mesmo campo e elas nao batem:
+  //
+  //   fieldKey da API      contact.afiliado__kit_alocado
+  //   Chave de consulta    afiliado_—__kit_alocado      <- com travessao
+  //
+  // A do formulario deriva do nome do campo ("Afiliado — Kit alocado") e
+  // carrega o travessao. Procurar por `afiliado__kit_alocado` nao casa com
+  // ela. `kit_alocado` casa com as duas, e nenhum outro campo da sub-conta
+  // contem esse pedaco — conferido na lista completa de campos.
   var CAMPOS = {
-    kit:   "afiliado__kit_alocado",
-    marca: "afiliado__marca_alocada"
+    kit:   "kit_alocado",
+    marca: "marca_alocada"
   };
 
   /* ============ OS KITS ============
@@ -410,13 +426,13 @@ body > #nk-seletor{min-height:100vh;border-radius:0}
     aviso.classList.remove("nk-oculto");
     aviso.innerHTML =
       "<b>Diagnóstico no carregamento</b> (DEBUG = true)<br>" +
-      "Campo <code>" + esc(CAMPOS.kit) + "</code>: <b>" + cKit.length + "</b> encontrado(s)" +
+      "Procurando por <code>*" + esc(CAMPOS.kit) + "*</code>: <b>" + cKit.length + "</b> encontrado(s)" +
       (cKit.length ? " &rarr; " + cKit.map(function(e){
         return "<code>" + esc(e.tagName.toLowerCase() + (e.type ? ":" + e.type : "") +
                " name=" + (e.getAttribute("name") || "—") +
                " id=" + (e.getAttribute("id") || "—")) + "</code>";
       }).join(" ") : " &mdash; <b>é por isto que nada grava</b>") + "<br>" +
-      "Campo <code>" + esc(CAMPOS.marca) + "</code>: <b>" + cMarca.length + "</b> encontrado(s)<br>" +
+      "Procurando por <code>*" + esc(CAMPOS.marca) + "*</code>: <b>" + cMarca.length + "</b> encontrado(s)<br>" +
       "Escondidos: <b>" + (cKit.length + cMarca.length) + "</b>" +
       (cKit.length && cKit[0].closest(".nk-campo-oculto") ? " (classe aplicada)" : "");
   }

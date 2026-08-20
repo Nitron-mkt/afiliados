@@ -33,6 +33,34 @@ Ou seja: os cards sao a interface, e o campo customizado e o que de fato
 viaja. Sem o campo no formulario, o clique nao tem onde pousar e nada e
 gravado — o criador escolhe, aperta enviar, e o kit chega vazio no contato.
 
+## Duas armadilhas do GHL que custaram tempo
+
+**1. O GHL tem duas chaves para o mesmo campo, e elas nao batem.**
+
+| Onde aparece | Valor |
+|---|---|
+| `fieldKey` da API | `contact.afiliado__kit_alocado` |
+| "Chave de consulta" no editor do formulario | `afiliado_—__kit_alocado` |
+
+A segunda deriva do **nome** do campo (`Afiliado — Kit alocado`) e carrega o
+travessao. Procurar por `afiliado__kit_alocado` **nao casa** com ela — e o
+script nao acha o campo, nao escreve e nao esconde.
+
+Por isso `CAMPOS` usa so o pedaco final: `kit_alocado` e `marca_alocada`.
+Casa com as duas formas, e nenhum outro campo da sub-conta contem esses
+pedacos (conferido na lista completa).
+
+**2. Campo de lista suspensa nao tem a opcao "Oculto".**
+
+No editor do formulario, campo de texto mostra duas caixas: `Obrigatorio` e
+`Oculto`. Campo `SINGLE_OPTIONS` mostra **so** `Obrigatorio`. Nao existe jeito
+nativo de esconder um dropdown.
+
+E por isso que o esconder vive no CSS deste arquivo, e nao numa
+configuracao do GHL. Se algum dia o GHL passar a oferecer "Oculto" para
+dropdown, marque lá e ponha `ESCONDER_ORIGINAL = false` — menos acoplamento
+ao DOM, melhor.
+
 ## Instalacao
 
 **1. Crie as duas opcoes no campo, se ainda nao existirem.**
