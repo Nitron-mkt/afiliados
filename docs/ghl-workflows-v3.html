@@ -829,6 +829,21 @@ Recorrente e nenhuma amostra sai.</pre>
   Os quatro primeiros passos têm o mesmo ramo de rejeição. Chame de
   <strong>DEVOLVER</strong> e repita igual nos quatro:
 </p>
+
+<div class="nota certo">
+  <span class="rotulo">No canvas, são 2 nós Condition e não 4</span>
+  <p>
+    Um <code class="en">Condition</code> do GHL aceita vários
+    <code class="en">Branch</code> e pega o primeiro que casar. Em vez de quatro
+    perguntas "está OK?", faça <strong>uma pergunta "tem algo errado?" com três
+    Branch</strong> — o <code class="en">None</code> é o caminho que segue. Cai
+    de 4 nós Condition para 2, com a lógica idêntica.
+  </p>
+  <p>
+    Canvas desenhado nó por nó, com a configuração de cada um:
+    <code>w1-canvas.html</code>.
+  </p>
+</div>
 <div class="nota perigo">
   <span class="rotulo">Ramo DEVOLVER</span>
   <p>

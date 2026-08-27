@@ -1,0 +1,535 @@
+<title>Canvas do W1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Karla:wght@400;500;600;700&display=swap">
+
+<style>
+  /* Tokens do projeto para a pagina. O canvas la dentro imita o GHL de
+     proposito, com as cores dele — e a unica parte que nao segue a nossa
+     paleta, porque precisa ser reconhecivel na tela do builder. */
+  :root{
+    --papel:#F7F7F4; --superficie:#FFFFFF; --fibra:#EDEAE1;
+    --tinta:#1C1B18; --tinta-2:#5F5B51; --tinta-3:#8A857A;
+    --teca:#A0642B; --mata:#2F5D4A; --sangue:#9B3226;
+    --borda:#DEDAD0; --borda-forte:#C9C3B5;
+    /* canvas GHL */
+    --g-fundo:#F5F8FC; --g-card:#FFFFFF; --g-borda:#E3E8F0;
+    --g-tinta:#1F2937; --g-tinta-2:#6B7280;
+    --g-teal:#0E9F8E; --g-roxo:#6366F1; --g-azul:#3B82F6;
+    --g-verde:#16A34A; --g-cinza:#9CA3AF; --g-laranja:#EA8C3A;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --papel:#141412; --superficie:#1C1C19; --fibra:#262622;
+      --tinta:#F2F0EA; --tinta-2:#B4AFA3; --tinta-3:#8A857A;
+      --teca:#D08F4A; --mata:#5C9C7D; --sangue:#D9695A;
+      --borda:#33322D; --borda-forte:#474540;
+      --g-fundo:#1A1C20; --g-card:#24272E; --g-borda:#343941;
+      --g-tinta:#E8EAED; --g-tinta-2:#9AA1AC;
+      --g-teal:#2CBFAD; --g-roxo:#8B8DF7; --g-azul:#5C9BF8;
+      --g-verde:#4ADE80; --g-cinza:#7C8391; --g-laranja:#F0A85E;
+    }
+  }
+  :root[data-theme="dark"]{
+    --papel:#141412; --superficie:#1C1C19; --fibra:#262622;
+    --tinta:#F2F0EA; --tinta-2:#B4AFA3; --tinta-3:#8A857A;
+    --teca:#D08F4A; --mata:#5C9C7D; --sangue:#D9695A;
+    --borda:#33322D; --borda-forte:#474540;
+    --g-fundo:#1A1C20; --g-card:#24272E; --g-borda:#343941;
+    --g-tinta:#E8EAED; --g-tinta-2:#9AA1AC;
+    --g-teal:#2CBFAD; --g-roxo:#8B8DF7; --g-azul:#5C9BF8;
+    --g-verde:#4ADE80; --g-cinza:#7C8391; --g-laranja:#F0A85E;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--papel);color:var(--tinta);
+    font-family:Karla,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  .pagina{max-width:1080px;margin:0 auto;padding:clamp(24px,5vw,56px) clamp(16px,4vw,36px) 90px}
+  main{max-width:none}
+
+  .olho{font:600 11px/1 Karla,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:var(--teca);display:block;margin-bottom:12px}
+  h1{font-family:"Bricolage Grotesque",Karla,sans-serif;font-weight:700;font-size:clamp(28px,5vw,44px);line-height:1.03;letter-spacing:-.028em;margin:0 0 15px;text-wrap:balance}
+  .resumo{font-size:clamp(17px,2.1vw,19.5px);line-height:1.5;color:var(--tinta-2);max-width:60ch}
+  h2{font-family:"Bricolage Grotesque",Karla,sans-serif;font-weight:700;font-size:clamp(22px,3vw,28px);line-height:1.14;letter-spacing:-.02em;margin:clamp(40px,5vw,58px) 0 14px;text-wrap:balance}
+  h3{font-family:"Bricolage Grotesque",Karla,sans-serif;font-weight:700;font-size:18px;margin:28px 0 9px;letter-spacing:-.01em}
+  p{margin:0 0 14px;max-width:68ch}
+  ul,ol{margin:0 0 14px;padding-left:21px;max-width:68ch}
+  li{margin-bottom:5px}
+  li::marker{color:var(--tinta-3)}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;background:var(--fibra);border:1px solid var(--borda);padding:1px 5px;border-radius:4px}
+  .rolagem{overflow-x:auto;margin:18px 0 22px;border:1px solid var(--borda);border-radius:10px;background:var(--superficie)}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:600px}
+  th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--borda);vertical-align:top}
+  th{font:600 10.5px/1.3 Karla,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta-3);background:var(--fibra);white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  .nota{margin:20px 0;padding:15px 17px;border-radius:10px;background:var(--superficie);border:1px solid var(--borda);border-left:3px solid var(--teca)}
+  .nota.perigo{border-left-color:var(--sangue)}
+  .nota.certo{border-left-color:var(--mata)}
+  .nota p:last-child{margin-bottom:0}
+  .nota .rotulo{font:700 11px/1 Karla,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--teca);display:block;margin-bottom:7px}
+  .nota.perigo .rotulo{color:var(--sangue)}
+  .nota.certo .rotulo{color:var(--mata)}
+
+  /* ============ CANVAS ============ */
+  .canvas{
+    background:var(--g-fundo);border:1px solid var(--g-borda);border-radius:14px;
+    padding:30px 18px 34px;margin:22px 0 10px;overflow-x:auto;
+    background-image:radial-gradient(var(--g-borda) 1px, transparent 1px);
+    background-size:22px 22px;
+  }
+  .pista{display:flex;flex-direction:column;align-items:center;min-width:min-content}
+
+  .no{
+    background:var(--g-card);border:1px solid var(--g-borda);border-radius:11px;
+    padding:11px 13px;width:246px;box-shadow:0 1px 2px rgba(31,41,55,.06);
+    display:flex;gap:10px;align-items:flex-start;position:relative;
+  }
+  .no.destaque{border-color:var(--g-teal);box-shadow:0 0 0 1.5px var(--g-teal),0 1px 2px rgba(31,41,55,.06)}
+  .no .ic{
+    width:26px;height:26px;border-radius:7px;flex:0 0 26px;display:grid;place-items:center;
+    font-size:13px;line-height:1;color:#fff;font-weight:700;
+  }
+  .ic-trigger{background:var(--g-azul)}
+  .ic-cond{background:var(--g-cinza)}
+  .ic-branch{background:var(--g-roxo)}
+  .ic-opp{background:var(--g-azul)}
+  .ic-tag{background:var(--g-laranja)}
+  .ic-campo{background:var(--g-teal)}
+  .ic-notif{background:var(--g-verde)}
+  .no .corpo{min-width:0;flex:1}
+  .no .tit{font:600 13.5px/1.3 Karla,sans-serif;color:var(--g-tinta);word-break:break-word}
+  .no .sub{font:400 11.5px/1.45 Karla,sans-serif;color:var(--g-tinta-2);margin-top:4px;word-break:break-word}
+  .no .sub b{color:var(--g-tinta);font-weight:600}
+  .no .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;background:transparent;border:0;padding:0}
+  .no .num{
+    position:absolute;top:-9px;left:-9px;width:21px;height:21px;border-radius:50%;
+    background:var(--g-tinta);color:var(--g-card);
+    font:700 11px/21px Karla,sans-serif;text-align:center;
+  }
+
+  .lig{width:1.5px;height:22px;background:var(--g-borda)}
+  .mais{
+    width:19px;height:19px;border-radius:50%;background:var(--g-card);
+    border:1.5px solid var(--g-borda);color:var(--g-tinta-2);
+    font:400 13px/16px Karla,sans-serif;text-align:center;
+  }
+  .fim{
+    background:var(--g-card);border:1px solid var(--g-borda);border-radius:8px;
+    padding:5px 15px;font:600 11px/1.4 Karla,sans-serif;color:var(--g-tinta-2);
+    letter-spacing:.05em;
+  }
+
+  /* split em ramos */
+  .ramos{display:flex;gap:16px;align-items:flex-start;justify-content:center}
+  .ramo{display:flex;flex-direction:column;align-items:center}
+  .barra{height:1.5px;background:var(--g-borda);width:100%;max-width:820px;margin:0 auto}
+  .cha{display:flex;flex-direction:column;align-items:center;gap:0}
+
+  .idem{
+    width:246px;padding:11px 13px;border-radius:11px;
+    border:1.5px dashed var(--g-borda);background:transparent;
+    font:400 12px/1.5 Karla,sans-serif;color:var(--g-tinta-2);text-align:center;
+  }
+  .idem b{color:var(--g-tinta)}
+
+  .legenda{
+    display:flex;flex-wrap:wrap;gap:14px;margin:14px 0 0;
+    font-size:12.5px;color:var(--tinta-3);
+  }
+  .legenda span{display:flex;align-items:center;gap:7px}
+  .legenda i{width:16px;height:16px;border-radius:5px;display:block}
+
+  .fim-doc{margin-top:50px;padding-top:18px;border-top:1px solid var(--borda);font-size:14px;color:var(--tinta-3)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="pagina">
+<main>
+
+<span class="olho">Molde para copiar · W1</span>
+<h1>Canvas do W1 no builder</h1>
+<p class="resumo">
+  O mesmo workflow desenhado como o GHL desenha, nó por nó, para você copiar
+  olhando. Cada nó tem um número que aponta para a tabela de configuração
+  no fim.
+</p>
+
+<div class="nota certo">
+  <span class="rotulo">Mudei a estrutura, e ela ficou menor</span>
+  <p>
+    O texto do guia dizia "quatro <code>If/Else</code> em série, cada um com o
+    ramo DEVOLVER". No canvas isso viraria <strong>4 nós Condition + 12 nós de
+    ação</strong>, com a mesma sequência repetida quatro vezes.
+  </p>
+  <p>
+    Mas um <code>Condition</code> do GHL aceita <strong>vários Branch</strong>, e
+    ele pega o primeiro que casar. Então em vez de quatro perguntas "está OK?",
+    faço <strong>uma pergunta "tem algo errado?" com três Branch</strong> — e o
+    <code>None</code>, que é "nada errado", é o caminho que segue para gerar o
+    pedido.
+  </p>
+  <p>
+    <strong>Dois nós Condition em vez de quatro.</strong> A lógica é idêntica: a
+    validação continua acontecendo antes do frete, e cada motivo de rejeição
+    continua com a sua própria notificação dizendo o que faltou.
+  </p>
+</div>
+
+<h2>O canvas</h2>
+
+<div class="canvas">
+<div class="pista">
+
+  <!-- TRIGGER -->
+  <div class="no destaque">
+    <span class="num">1</span>
+    <span class="ic ic-trigger">⇄</span>
+    <span class="corpo">
+      <span class="tit">Etapa Do Funil Alterada</span>
+      <span class="sub">
+        No pipeline is <b>"Afiliados Jornada"</b><br>
+        Etapa do pipeline is <b>"Amostra solicitada"</b>
+      </span>
+    </span>
+  </div>
+
+  <div class="lig"></div><div class="mais">+</div><div class="lig"></div>
+
+  <!-- CONDITION 1 -->
+  <div class="no">
+    <span class="num">2</span>
+    <span class="ic ic-cond">{}</span>
+    <span class="corpo">
+      <span class="tit">Condition</span>
+      <span class="sub">Tem algo errado antes do frete?</span>
+    </span>
+  </div>
+
+  <div class="lig"></div>
+  <div class="barra"></div>
+
+  <div class="ramos">
+
+    <!-- BRANCH A -->
+    <div class="ramo">
+      <div class="lig"></div>
+      <div class="no">
+        <span class="num">3</span>
+        <span class="ic ic-branch">⑂</span>
+        <span class="corpo">
+          <span class="tit">Branch · Dados incompletos</span>
+          <span class="sub">
+            If <span class="mono">CPF</span> is empty<br>
+            <b>OR</b> <span class="mono">Address</span> is empty<br>
+            <b>OR</b> <span class="mono">Postal Code</span> is empty
+          </span>
+        </span>
+      </div>
+      <div class="lig"></div><div class="mais">+</div><div class="lig"></div>
+      <div class="no">
+        <span class="num">4</span>
+        <span class="ic ic-tag">#</span>
+        <span class="corpo">
+          <span class="tit">Adicionar tag de contato</span>
+          <span class="sub"><b>afil-devolvido</b></span>
+        </span>
+      </div>
+      <div class="lig"></div><div class="mais">+</div><div class="lig"></div>
+      <div class="no">
+        <span class="num">5</span>
+        <span class="ic ic-notif">✉</span>
+        <span class="corpo">
+          <span class="tit">Notificação interna</span>
+          <span class="sub">"Amostra barrada por dados incompletos"</span>
+        </span>
+      </div>
+      <div class="lig"></div><div class="mais">+</div><div class="lig"></div>
+      <div class="no">
+        <span class="num">6</span>
+        <span class="ic ic-opp">◎</span>
+        <span class="corpo">
+          <span class="tit">Criar ou atualizar oportunidade</span>
+          <span class="sub">Afiliados Jornada → <b>Aceito</b></span>
+        </span>
+      </div>
+      <div class="lig"></div>
+      <div class="fim">FIM</div>
+    </div>
+
+    <!-- BRANCH B -->
+    <div class="ramo">
+      <div class="lig"></div>
+      <div class="no">
+        <span class="num">7</span>
+        <span class="ic ic-branch">⑂</span>
+        <span class="corpo">
+          <span class="tit">Branch · Bloqueado</span>
+          <span class="sub">If <span class="mono">Tags</span> incluir <b>"afil-bloqueado"</b></span>
+        </span>
+      </div>
+      <div class="lig"></div><div class="mais">+</div><div class="lig"></div>
+      <div class="idem">
+        <b>Iguais aos nós 4, 5 e 6</b><br>
+        só muda o texto da notificação:<br>
+        "Bloqueado tentou pedir amostra"
+      </div>
+      <div class="lig"></div>
+      <div class="fim">FIM</div>
+    </div>
+
+    <!-- BRANCH C -->
+    <div class="ramo">
+      <div class="lig"></div>
+      <div class="no">
+        <span class="num">8</span>
+        <span class="ic ic-branch">⑂</span>
+        <span class="corpo">
+          <span class="tit">Branch · Sem marca</span>
+          <span class="sub">If <span class="mono">Afiliado — Marca alocada</span> is empty</span>
+        </span>
+      </div>
+      <div class="lig"></div><div class="mais">+</div><div class="lig"></div>
+      <div class="idem">
+        <b>Iguais aos nós 4, 5 e 6</b><br>
+        só muda o texto da notificação:<br>
+        "Afiliado sem marca alocada"
+      </div>
+      <div class="lig"></div>
+      <div class="fim">FIM</div>
+    </div>
+
+    <!-- NONE = segue -->
+    <div class="ramo">
+      <div class="lig"></div>
+      <div class="no destaque">
+        <span class="num">9</span>
+        <span class="ic ic-branch">⑂</span>
+        <span class="corpo">
+          <span class="tit">None</span>
+          <span class="sub">
+            When none of the conditions are met<br>
+            <b>→ este é o caminho que segue</b>
+          </span>
+        </span>
+      </div>
+      <div class="lig"></div><div class="mais">+</div><div class="lig"></div>
+
+      <!-- CONDITION 2 -->
+      <div class="no">
+        <span class="num">10</span>
+        <span class="ic ic-cond">{}</span>
+        <span class="corpo">
+          <span class="tit">Condition</span>
+          <span class="sub">Kit está na lista aprovada?</span>
+        </span>
+      </div>
+
+      <div class="lig"></div>
+      <div class="barra" style="max-width:520px"></div>
+
+      <div class="ramos">
+        <!-- kit OK -->
+        <div class="ramo">
+          <div class="lig"></div>
+          <div class="no destaque">
+            <span class="num">11</span>
+            <span class="ic ic-branch">⑂</span>
+            <span class="corpo">
+              <span class="tit">Branch · Kit permitido</span>
+              <span class="sub">
+                If <span class="mono">Afiliado — Kit alocado</span><br>
+                contains <b>905.K01.999</b><br>
+                <b>OR</b> contains <b>914.K01.002</b><br>
+                <b>OR</b> contains <b>907.K01.999</b>
+              </span>
+            </span>
+          </div>
+          <div class="lig"></div><div class="mais">+</div><div class="lig"></div>
+          <div class="no">
+            <span class="num">12</span>
+            <span class="ic ic-opp">◎</span>
+            <span class="corpo">
+              <span class="tit">Criar ou atualizar oportunidade</span>
+              <span class="sub">
+                Pedidos-Preparacao → <b>Pedidos a Liberar</b><br>
+                Nome: <span class="mono">AMOSTRA - {{contact.first_name}} - {{contact.afiliado__kit_alocado}}</span>
+              </span>
+            </span>
+          </div>
+          <div class="lig"></div><div class="mais">+</div><div class="lig"></div>
+          <div class="no">
+            <span class="num">13</span>
+            <span class="ic ic-tag">#</span>
+            <span class="corpo">
+              <span class="tit">Adicionar tag de contato</span>
+              <span class="sub"><b>amostra-afiliado</b></span>
+            </span>
+          </div>
+          <div class="lig"></div><div class="mais">+</div><div class="lig"></div>
+          <div class="no">
+            <span class="num">14</span>
+            <span class="ic ic-campo">✎</span>
+            <span class="corpo">
+              <span class="tit">Atualizar campo de contato</span>
+              <span class="sub">
+                Afiliado — Data ultima amostra = <b>hoje</b><br>
+                Afiliado — Qtd amostras enviadas = <b>atual + 1</b>
+              </span>
+            </span>
+          </div>
+          <div class="lig"></div>
+          <div class="fim">FIM</div>
+        </div>
+
+        <!-- kit fora -->
+        <div class="ramo">
+          <div class="lig"></div>
+          <div class="no">
+            <span class="num">15</span>
+            <span class="ic ic-branch">⑂</span>
+            <span class="corpo">
+              <span class="tit">None</span>
+              <span class="sub">When none of the conditions are met<br><b>→ kit fora da lista</b></span>
+            </span>
+          </div>
+          <div class="lig"></div><div class="mais">+</div><div class="lig"></div>
+          <div class="idem">
+            <b>Iguais aos nós 4, 5 e 6</b><br>
+            só muda o texto da notificação:<br>
+            "Kit fora da faixa de margem"
+          </div>
+          <div class="lig"></div>
+          <div class="fim">FIM</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="legenda">
+  <span><i style="background:var(--g-azul)"></i> gatilho e oportunidade</span>
+  <span><i style="background:var(--g-cinza)"></i> Condition</span>
+  <span><i style="background:var(--g-roxo)"></i> Branch / None</span>
+  <span><i style="background:var(--g-laranja)"></i> tag</span>
+  <span><i style="background:var(--g-verde)"></i> notificação</span>
+  <span><i style="background:var(--g-teal)"></i> campo</span>
+</div>
+</div>
+
+<p style="margin-top:16px;font-size:14px;color:var(--tinta-3)">
+  Os três blocos tracejados são a mesma sequência de três nós — tag,
+  notificação, oportunidade para <code>Aceito</code>. Desenhei uma vez inteira
+  no ramo <em>Dados incompletos</em> e referenciei nos outros, porque no builder
+  você vai repetir exatamente esses três.
+</p>
+
+<h2>O que digitar em cada nó</h2>
+
+<div class="rolagem">
+<table>
+  <thead><tr><th>Nº</th><th>Nó</th><th>Configuração exata</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Etapa Do Funil Alterada</td><td>No pipeline is <code>Afiliados Jornada</code> · Etapa do pipeline is <code>Amostra solicitada</code></td></tr>
+    <tr><td>2</td><td>Condition</td><td>Adicione <strong>três</strong> Branch. O GHL cria o <code>None</code> sozinho</td></tr>
+    <tr><td>3</td><td>Branch 1</td><td><code>CPF</code> is empty <strong>OR</strong> <code>Address</code> is empty <strong>OR</strong> <code>Postal Code</code> is empty</td></tr>
+    <tr><td>4</td><td>Adicionar tag</td><td><code>afil-devolvido</code></td></tr>
+    <tr><td>5</td><td>Notificação interna</td><td>tipo <code>Email</code>, destinatário você. Assunto: <code>Amostra barrada por dados incompletos: {{contact.first_name}}</code></td></tr>
+    <tr><td>6</td><td>Criar ou atualizar oportunidade</td><td><code>Afiliados Jornada</code> → <code>Aceito</code></td></tr>
+    <tr><td>7</td><td>Branch 2</td><td><code>Tags</code> incluir <code>afil-bloqueado</code></td></tr>
+    <tr><td>8</td><td>Branch 3</td><td><code>Afiliado — Marca alocada</code> is empty</td></tr>
+    <tr><td>9</td><td>None</td><td>não configura nada. É o caminho de quem passou</td></tr>
+    <tr><td>10</td><td>Condition</td><td>Adicione <strong>um</strong> Branch. O <code>None</code> vira o ramo do kit fora</td></tr>
+    <tr><td>11</td><td>Branch</td><td><code>Afiliado — Kit alocado</code> contains <code>905.K01.999</code> <strong>OR</strong> contains <code>914.K01.002</code> <strong>OR</strong> contains <code>907.K01.999</code></td></tr>
+    <tr><td>12</td><td>Criar ou atualizar oportunidade</td><td><code>Pedidos-Preparacao</code> → <code>Pedidos a Liberar</code>. Nome: <code>AMOSTRA - {{contact.first_name}} - {{contact.afiliado__kit_alocado}}</code></td></tr>
+    <tr><td>13</td><td>Adicionar tag</td><td><code>amostra-afiliado</code></td></tr>
+    <tr><td>14</td><td>Atualizar campo</td><td><code>Afiliado — Data ultima amostra</code> = hoje · <code>Afiliado — Qtd amostras enviadas</code> = atual + 1</td></tr>
+    <tr><td>15</td><td>None</td><td>não configura. É o kit fora da lista</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Cinco coisas que só aparecem ao montar</h2>
+
+<h3>1. A ordem dos Branch importa</h3>
+<p>
+  O GHL avalia de cima para baixo e <strong>para no primeiro que casar</strong>.
+  Se um criador estiver sem CPF <em>e</em> bloqueado, ele cai no Branch 1 e você
+  recebe a notificação de dados incompletos, não a de bloqueio. Está certo assim:
+  o primeiro problema é o que você vai resolver primeiro. Mas não inverta a
+  ordem sem pensar — <code>Bloqueado</code> antes de <code>Dados
+  incompletos</code> faria você corrigir endereço de quem nem pode receber.
+</p>
+
+<h3>2. O campo Bairro entra no Branch 1 quando existir</h3>
+<p>
+  Hoje ele não existe na sub-conta, então o Branch 1 tem três condições. Quando
+  você criar o campo, adicione <code>OR Bairro is empty</code> — vira a quarta.
+  Sem isso, a validação de endereço está incompleta e o Sankhya não emite a nota.
+</p>
+
+<h3>3. "Qtd amostras enviadas = atual + 1" pode não existir como opção</h3>
+<p>
+  Se o <code>Atualizar campo de contato</code> não oferecer incremento, três
+  saídas, em ordem de preferência:
+</p>
+<ol>
+  <li>usar <code>{{contact.afiliado__qtd_amostras_enviadas}}</code> no valor, se o campo aceitar merge field — alguns builders resolvem a soma</li>
+  <li>deixar o campo de fora e contar pelo Supabase, que já registra cada envio em <code>ghl_sync_log</code></li>
+  <li>deixar em branco e preencher à mão nas primeiras semanas, enquanto o volume é pequeno</li>
+</ol>
+<p>
+  O que <strong>não</strong> fazer: gravar <code>1</code> fixo. O W4 usa esse
+  número para decidir segunda amostra, e um valor sempre-1 esconde exatamente o
+  caso que ele existe para pegar.
+</p>
+
+<h3>4. O nó 14 pode ser um só, ou dois</h3>
+<p>
+  Se o <code>Atualizar campo de contato</code> aceitar vários campos numa ação,
+  use um nó. Se pedir um por ação, são dois nós em sequência. Não muda nada no
+  comportamento.
+</p>
+
+<h3>5. Confira o nome do nó de tag na sua lista</h3>
+<p>
+  No seu print apareceu <code>Criar ou atualizar oportunidade</code> em
+  português, mas <code>Condition</code>, <code>Branch</code> e <code>None</code>
+  ficaram em inglês — a tradução é parcial. Se não achar
+  <code>Adicionar tag de contato</code>, procure por <code>Add Contact Tag</code>.
+  O mesmo vale para <code>Notificação interna</code> /
+  <code>Internal Notification</code> e <code>Atualizar campo de contato</code> /
+  <code>Update Contact Field</code>.
+</p>
+
+<div class="nota perigo">
+  <span class="rotulo">Antes de publicar, três travas</span>
+  <p>
+    <strong>A tag <code>afil-devolvido</code> tem que existir</strong> em
+    <code>Settings → Tags</code>, senão os nós 4 e equivalentes não têm o que
+    selecionar.
+  </p>
+  <p>
+    <strong>O W4 tem que estar construído.</strong> O W1 gera amostra, amostra
+    gera extravio, extravio devolve card para <code>Aceito</code> — e é lá que o
+    W4 age. Publicar o W1 antes do W4 manda a primeira amostra extraviada para
+    <code>Recorrente</code>.
+  </p>
+  <p>
+    <strong>Teste com endereço vazio primeiro.</strong> O card tem que voltar
+    para <code>Aceito</code> e <em>ficar lá</em>. Se ele for para
+    <code>Recorrente</code>, a tag não está sendo aplicada antes do movimento.
+  </p>
+</div>
+
+<p class="fim-doc">
+  O canvas aqui imita o GHL de propósito, com as cores dele — é a única parte
+  desta página que não segue a paleta do projeto, porque precisa ser
+  reconhecível ao lado da tela do builder.
+</p>
+
+</main>
+</div>

@@ -445,7 +445,36 @@ Porteiro antes do frete.
 
 - **Trigger:** `Pipeline Stage Changed` → `Afiliados Jornada` / `Amostra solicitada`
 
-Os passos 1 a 4 compartilham o mesmo ramo de rejeição:
+#### Estrutura no canvas: 2 nós Condition, não 4
+
+A especificação abaixo descreve quatro validações. No canvas do GHL, montá-las
+como quatro `If/Else` em série gera 4 nós Condition e 12 nós de ação, com a
+mesma sequência repetida quatro vezes.
+
+Um `Condition` do GHL aceita **vários Branch** e pega o **primeiro que casar**.
+Então a montagem correta inverte a pergunta:
+
+```
+Condition 1 — "tem algo errado?"
+  Branch 1  Dados incompletos   CPF is empty OR Address is empty OR Postal Code is empty
+  Branch 2  Bloqueado           Tags incluir afil-bloqueado
+  Branch 3  Sem marca           afiliado__marca_alocada is empty
+  None      passou              -> segue
+
+Condition 2 — "kit permitido?"
+  Branch    Kit na lista        afiliado__kit_alocado contains 905.K01.999 OR 914.K01.002 OR 907.K01.999
+  None      kit fora            -> DEVOLVER
+```
+
+**A ordem dos Branch importa.** O GHL para no primeiro que casar. Criador sem
+CPF **e** bloqueado cai no Branch 1, e a notificação é de dados incompletos.
+Está correto: o primeiro problema é o que se resolve primeiro. Não inverta
+`Bloqueado` para depois de `Dados incompletos` sem pensar — faria alguém
+corrigir endereço de quem não pode receber.
+
+Canvas desenhado nó por nó: `w1-canvas.html`.
+
+Os quatro ramos de rejeição compartilham a mesma sequência:
 
 **Ramo DEVOLVER:** `Add Contact Tag` `afil-devolvido` · `Internal Notification`
 dizendo o que falta · `Update Opportunity` → `Aceito` · **fim**
@@ -461,6 +490,15 @@ A tag nos quatro ramos é a invariante I3.
 | 5 | `Create/Update Opportunity` | `Pedidos-Preparacao` / `Pedidos a Liberar`. Nome: `AMOSTRA - {{contact.first_name}} - {{contact.afiliado__kit_alocado}}` | |
 | 6 | `Add Contact Tag` | `amostra-afiliado` — é a tag que o W2 e o W2b checam | |
 | 7 | `Update Contact Field` | `afiliado__data_ultima_amostra` = hoje; `afiliado__qtd_amostras_enviadas` = atual + 1 | |
+
+**Sobre o incremento do passo 7:** não está confirmado que o
+`Update Contact Field` do GHL ofereça incremento de campo numérico. Se não
+oferecer, em ordem de preferência: (a) usar
+`{{contact.afiliado__qtd_amostras_enviadas}}` no valor, se o campo aceitar
+merge field; (b) deixar de fora e contar pelo Supabase, que registra cada envio
+em `ghl_sync_log`; (c) preencher à mão enquanto o volume é pequeno.
+**Não gravar `1` fixo:** o W4 usa esse número para decidir segunda amostra, e um
+valor sempre-1 esconde exatamente o caso que ele existe para pegar.
 
 **Passo 4 compara referências, não nomes:** `905.K01.999`, `914.K01.002`,
 `907.K01.999`. Kit novo liberado no frete = uma condição nova aqui.
