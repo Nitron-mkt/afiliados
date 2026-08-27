@@ -138,6 +138,9 @@
   }
   .fim-doc{margin-top:52px;padding-top:18px;border-top:1px solid var(--borda);font-size:14px;color:var(--tinta-3)}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  .corr{border-left:3px solid #c8873a;background:rgba(200,135,58,.07);
+        padding:.7em 1em;margin:1.1em 0;border-radius:0 4px 4px 0;font-size:.94em}
+  .corr b{color:#c8873a}
 </style>
 
 <div class="pagina">
@@ -202,8 +205,8 @@
     <tr><td class="num">6</td><td>Os estágios usam <strong>acento</strong>: <code>Inadimplente de conteúdo</code>, <code>Conteúdo publicado</code></td><td>W3</td></tr>
     <tr><td class="num">7</td><td><code>Afiliado — Kit alocado</code> e <code>Afiliado — Marca alocada</code> são <strong>TEXT</strong> e ficam ocultos no formulário</td><td>W9, W1</td></tr>
     <tr><td class="num">8</td><td>A trava do W2 foi <strong>verificada</strong>: 1.223 contatos entraram, nenhum indevido recebeu mensagem</td><td>W2</td></tr>
-    <tr><td class="num">9</td><td><code>afil-import</code> passou a existir. Faltam <strong>cinco</strong> tags</td><td>todos</td></tr>
-    <tr><td class="num">10</td><td>O campo <strong><code>Bairro</code> ainda não existe.</strong> Toda validação de endereço está incompleta até ele nascer</td><td>W1, W9</td></tr>
+    <tr><td class="num">9</td><td><strong>Todas as tags existem</strong> — as doze <code>afil-*</code>. Resolvido em 27/08</td><td>todos</td></tr>
+    <tr><td class="num">10</td><td>O campo <strong><code>Bairro</code> existe</strong> desde 27/08 — <code>contact.bairro</code>. Falta só entrar no formulário</td><td>W1, W9</td></tr>
   </tbody>
 </table>
 </div>
@@ -315,18 +318,25 @@
   é usada pelos W0–W9.
 </p>
 
-<h3>2. Criar o campo Bairro</h3>
+<h3>2. O campo Bairro — feito</h3>
 <p>
-  <code class="en">Settings</code> → <code class="en">Custom Fields</code>, na
-  mesma pasta de <code>CPF</code> e <code>CNPJ</code>. Tipo
-  <code class="en">TEXT</code>, nome <strong>Bairro</strong>, sem prefixo de
-  afiliado — serve para a conta toda.
+  <strong>Criado em 27/08/2026 pela API.</strong> Chave <code>contact.bairro</code>,
+  tipo <code class="en">TEXT</code>, id <code>dDlZtl9xsCdQYNXov8eQ</code>. Ficou na
+  pasta de <code>WhatsApp</code> e <code>Instagram</code>, não na de <code>CPF</code>
+  — sem consequência funcional, a chave não depende da pasta.
 </p>
 <p>
-  Depois de criar, dois passos que se esquece: <strong>incluir no formulário</strong>
-  de cadastro, e <strong>adicionar a condição</strong> no W9 passo 4 e no W1
-  passo 1. Não dá para criar por API: o GHL só aceita criação de campo para
-  Custom Object e Company, testado.
+  Restam os dois passos que a API não faz: <strong>incluir no formulário</strong>
+  de cadastro, senão o criador nunca preenche, e <strong>adicionar a condição</strong>
+  <code>Bairro is not empty</code> no W9 passo 4 e no W1 passo 1.
+</p>
+<p class="corr">
+  <b>Correção.</b> Este guia dizia que não dava para criar o campo por API,
+  citando um teste real. O teste era da rota <code>/custom-fields/</code>, que
+  de fato recusa contato. A rota antiga
+  <code>/locations/{id}/customFields</code>, com <code>model: "contact"</code>,
+  cria sem reclamar. O campo esperou oito dias por uma conclusão minha que era
+  mais larga que o teste que a sustentava.
 </p>
 
 <h3>3. Fechar a lista de kits aprovados</h3>
@@ -453,7 +463,7 @@
     <tr><td>Codigo Representante</td><td><code>contact.codigo_representante</code></td><td>TEXT</td><td>trava de revendedor</td></tr>
     <tr><td>CPF</td><td><code>contact.cpf</code></td><td>TEXT</td><td></td></tr>
     <tr><td>WhatsApp</td><td><code>contact.whatsapp</code></td><td>PHONE</td><td>customizado, não é o phone padrão</td></tr>
-    <tr><td><strong>Bairro</strong></td><td>—</td><td>—</td><td><strong>não existe ainda</strong></td></tr>
+    <tr><td><strong>Bairro</strong></td><td><code>contact.bairro</code></td><td>TEXT</td><td>criado 27/08, <strong>falta no formulário</strong></td></tr>
     <tr><td>Afiliado — Kit alocado</td><td><code>contact.afiliado__kit_alocado</code></td><td>TEXT</td><td>referência do ERP, ex. <code>905.K01.999</code></td></tr>
     <tr><td>Afiliado — Marca alocada</td><td><code>contact.afiliado__marca_alocada</code></td><td>TEXT</td><td>Nitron · Mundo UD · Teak Brazil</td></tr>
     <tr><td>Afiliado — Trilha</td><td><code>contact.afiliado__trilha</code></td><td>SINGLE_OPTIONS</td><td>Achadinhos · Mudanca casa nova · Nicho organizacao · Curadoria teca · Key account</td></tr>
@@ -551,7 +561,7 @@
       <li><code>WhatsApp</code> — <code>contact.whatsapp</code></li>
       <li><code class="en">Postal Code</code> — campo padrão do contato</li>
       <li><code class="en">Address</code> — campo padrão do contato</li>
-      <li><code>Bairro</code> — <strong>só quando o campo existir</strong></li>
+      <li><code>Bairro</code> — <code>contact.bairro</code></li>
     </ul>
     <div class="ramo">
       <b>Ramo NÃO:</b>
@@ -862,7 +872,7 @@ Recorrente e nenhuma amostra sai.</pre>
 <ol class="passos">
   <li>
     <span class="acao"><code class="en">If/Else</code> — dados de envio OK?</span>
-    <span class="det">Todas com <code class="en">AND</code>, todas <code class="en">is not empty</code>: <code>contact.cpf</code> · <code class="en">Address</code> · <code class="en">Postal Code</code> · <code>Bairro</code> quando existir</span>
+    <span class="det">Todas com <code class="en">AND</code>, todas <code class="en">is not empty</code>: <code>contact.cpf</code> · <code class="en">Address</code> · <code class="en">Postal Code</code> · <code>contact.bairro</code></span>
     <div class="ramo"><b>NÃO:</b> ramo DEVOLVER</div>
   </li>
   <li>

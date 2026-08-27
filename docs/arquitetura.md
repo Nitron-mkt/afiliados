@@ -98,8 +98,8 @@ Revisado em 19/08/2026 contra o estado real do GHL — ver `ghl-inventario.md`.
 | # | Pendencia | Bloqueia | Estado |
 |---|---|---|---|
 | 1 | **W7 esta publicado com frete nao medido** | nenhum e-mail saiu ainda (0 contatos entraram, pipeline vazio), mas dispara no primeiro sync real | aberta |
-| 2 | Campo `Bairro` nao existe no GHL | W1 e W9 nao validam endereco; Sankhya nao emite nota | aberta, confirmada |
-| 3 | Chaves de merge field | `afiliado__marca_alocada` e `afiliado__codigo_de_rastreio` **confirmadas**; `bairro` nao existe | resolvida em 2 de 3 |
+| 2 | Campo `Bairro` | — | **fechada em 27/08/2026**: criado pela API, `contact.bairro`, id `dDlZtl9xsCdQYNXov8eQ`. Falta so entrar no formulario e nas condicoes do W1/W9 |
+| 3 | Chaves de merge field | — | **resolvida**: `afiliado__marca_alocada`, `afiliado__codigo_de_rastreio` e `bairro` todas confirmadas contra a API |
 | 4 | Lista de kits aprovados nao fechada | agora bloqueia so as opcoes do dropdown do formulario, nao o fluxo | aberta, despriorizada |
 | 5 | Sincronizacao Supabase -> GHL | — | **feita e testada com write real**: `ghl-sync` |
 | 6 | GMV nao volta do Sankhya/Shopify | W6 nunca dispara sozinho | aberta |
@@ -107,7 +107,7 @@ Revisado em 19/08/2026 contra o estado real do GHL — ver `ghl-inventario.md`.
 | 8 | **W0 nao existe** | a porta de entrada da importacao | contornada pelo `ghl-sync`, que ja cria contato e card |
 | 9 | **W4 nao existe** | a trava de reenvio | aberta, ver aviso abaixo |
 | 10 | Kit e marca vazios | resolvido por decisao: kit vem do formulario, marca deriva do kit. Falta so o campo virar `SINGLE_OPTIONS` e entrar no formulario | encaminhada |
-| 11 | Cinco tags do guia nao existem no GHL | `afil-devolvido` `afil-conteudo-combinado` `afil-revendedor` `afil-cadastro-incompleto` `afil-teste`. A `afil-import` passou a existir no teste do sync | aberta |
+| 11 | Tags do guia | — | **fechada em 27/08/2026**: duas ja existiam (`afil-devolvido`, `afil-conteudo-combinado`), tres foram criadas pela API (`afil-revendedor`, `afil-cadastro-incompleto`, `afil-teste`). IDs em `ghl-inventario.md` |
 
 Nenhuma pendencia esta causando dano agora: o pipeline de afiliados esta
 vazio, entao nenhum workflow chegou a agir sobre um afiliado de verdade. As
@@ -155,3 +155,30 @@ como rede de seguranca. Se um dia o W0 for construido, ele usa
 ## Sub-conta GHL
 
 Nitron — `rZ8y7lzqV7fzxsartaX2`
+
+## Correcao de 27/08/2026 — o limite da API era da rota, nao do GHL
+
+Este repo carregava por oito dias a afirmacao "campo de contato nao se cria por
+API". Ela vinha de um teste real, com a resposta da propria API — e estava
+errada como conclusao geral. O `400` era de `POST /custom-fields/`, a rota nova
+orientada a objeto. A rota antiga, `POST /locations/{id}/customFields`, cria
+campo de contato sem reclamar, usando `model: "contact"` em vez de
+`objectKey`.
+
+O `Bairro` levou oito dias para nascer por causa disso, e a pendencia 2 ficou
+marcada "confirmada" — o que fez com que ninguem duvidasse dela.
+
+Regra que fica: **uma limitacao de API se registra com a rota que respondeu.**
+"A API nao faz X" e uma frase sobre a API; "`POST /custom-fields/` responde 400
+para `objectKey: contact`" e uma frase sobre um endpoint, e deixa espaco para
+existir outro.
+
+O que **continua** verdade e vale o mesmo cuidado:
+
+- **workflow nao se cria nem se edita por API.** Reconferido em 27/08 contra o
+  registro completo de operacoes do servidor MCP oficial do GHL: existem
+  `GET /workflows/`, `POST /contacts/{id}/workflow/{id}` e
+  `DELETE /contacts/{id}/workflow/{id}`. Nao existe nenhuma operacao de escrita
+  no proprio workflow. Duas superficies independentes dizem a mesma coisa, e
+  nao ha rota alternativa escondida como havia para o campo.
+- W1 a W9 seguem sendo construcao manual na interface.

@@ -1,6 +1,8 @@
 # Inventario real da sub-conta Nitron
 
 Levantado pela API em 19/08/2026. Sub-conta `rZ8y7lzqV7fzxsartaX2`.
+**Reconferido em 27/08/2026** pelo servidor MCP oficial do GHL — duas linhas
+deste arquivo estavam erradas e foram corrigidas abaixo.
 
 Este arquivo existe para nao adivinhar chave de merge field nem nome de stage.
 Tudo aqui foi lido da API, nao deduzido. Reconferir quando alguem mexer no GHL
@@ -16,7 +18,7 @@ pela interface.
 | 2 | **W0 nao existe** e a tag `afil-import` nao existe | a porta de entrada da importacao nao esta construida |
 | 3 | **W4 nao existe** | ver nota de seguranca abaixo |
 | 4 | Chaves `afiliado__marca_alocada` e `afiliado__codigo_de_rastreio` **confirmadas** | pendencia 3 do arquitetura.md resolvida em 2 de 3 |
-| 5 | **`Bairro` nao existe** na sub-conta | confirma pendencia 2. Nao ha campo equivalente: `Zona` e `Praca` sao de outro contexto |
+| 5 | ~~**`Bairro` nao existe**~~ **criado em 27/08/2026 pela API** | `dDlZtl9xsCdQYNXov8eQ`, chave `contact.bairro`. Pendencia 2 fechada — ver a correcao no fim deste arquivo |
 | 6 | Pipeline tem stage **`Key Account`** que o guia W0-W9 nao menciona | o roteamento do Supabase ja produz `key_account`; ha destino pronto para ele |
 | 7 | Picklist de vitrine divergente do que o Supabase grava | 10 registros cairiam em campo vazio |
 | 8 | Stages usam **acento**: `Inadimplente de conteúdo`, `Conteúdo publicado` | o guia escreve sem acento; condicao por texto exato nao casaria |
@@ -64,9 +66,11 @@ Nao receberam. Tres verificacoes independentes, 19/08/2026:
 | cards no pipeline `Afiliados Jornada` | **0** | ninguem chegou ao passo 2, que moveria para `Amostra recebida` |
 | WhatsApp e SMS de saida com o texto do W2 | nenhum | o passo 4 nunca rodou |
 
-A tag `afil-devolvido` tambem nao existe na sub-conta, o que confirma o mesmo
-para os 23 do W2b: se algum tivesse passado do passo 1, o passo 2 teria criado
-a tag.
+A tag `afil-devolvido` nao existia na sub-conta em 19/08, o que confirma o
+mesmo para os 23 do W2b: se algum tivesse passado do passo 1, o passo 2 teria
+criado a tag. **Em 27/08 ela ja existia** (`fHdg9yB72pwAgvjRSPA7`), criada pela
+interface — isso nao invalida a verificacao de 19/08, mas quer dizer que a
+prova por ausencia de tag nao serve mais daqui para frente.
 
 **O pipeline de afiliados esta vazio: nenhum card, nunca.** Isso explica o 0
 do W7 tambem — nada chegou a `Qualificado`, porque nada chegou a lugar nenhum.
@@ -154,7 +158,7 @@ Campos gerais que a jornada usa:
 | CNPJ | `contact.cpfcnpj` | atencao: o **nome** e CNPJ, a **chave** e `cpfcnpj` |
 | Codigo Representante | `contact.codigo_representante` | trava de revendedor do W0/W5/W9 |
 | WhatsApp | `contact.whatsapp` | campo customizado, separado do phone padrao |
-| **Bairro** | **nao existe** | criar como TEXT, sem prefixo de afiliado. **So pela interface** — ver abaixo |
+| **Bairro** | `contact.bairro` | TEXT, id `dDlZtl9xsCdQYNXov8eQ`. **Existe desde 27/08/2026**, criado pela API. Chave **verificada**, nao deduzida |
 
 ### Kit e Marca recriados em 20/08/2026 — e a regra que sai disso
 
@@ -204,33 +208,81 @@ Nitron (Polypus Digital) e tem **CNPJ preenchido** — que e exatamente a trava
 de revendedor do W9 passo 2. Para testar o resto do W9, precisa de um contato
 limpo, sem CNPJ nem codigo de representante, com a tag `afil-teste`.
 
-### Campo de contato nao se cria por API — testado
+### Campo de contato SE cria por API — a rota certa e a antiga
 
-### Campo de contato nao se cria por API — testado
+Corrigido em 27/08/2026. O que eu tinha registrado aqui estava certo sobre o
+endpoint que testei e **errado sobre a conclusao**. A limitacao e da rota nova,
+nao do GHL.
 
-Tentado em 19/08/2026, e a API responde sem ambiguidade:
+**A rota que recusa** — `/custom-fields/`, a orientada a objeto:
 
 ```
 POST /custom-fields/  { objectKey: "contact", fieldKey: "contact.bairro", ... }
 -> 400  "Api does not support objectKey of type contact or opportunity"
+
+GET /custom-fields/{id}
+-> 400  "Fields with model contact is not supported on this route"
 ```
 
-A rota de leitura por id tem o mesmo limite:
-`GET /custom-fields/{id}` -> 400 `"Fields with model contact is not supported on this route"`.
+Ela so aceita Custom Object e Company. Isso continua verdade.
 
-O `POST /custom-fields/` so aceita Custom Object e Company. Ler a lista de
-campos de contato funciona (`GET /locations/{id}/customFields?model=contact`),
-criar nao. Nao insistir: e limite do GHL, nao de credencial.
+**A rota que funciona** — `/locations/{locationId}/customFields`, a antiga, que
+usa `model` em vez de `objectKey`:
 
-**Como criar o Bairro:** `Settings` -> `Custom Fields`, na mesma pasta onde
-estao `CPF`, `CNPJ`, `Codigo Representante`, `Zona` e `Praca`
-(id `BBYq38L550saG72oULys`). Tipo **TEXT**, nome **Bairro**, sem prefixo de
-afiliado — ele serve para a conta toda, nao so para afiliado.
+```
+POST /locations/rZ8y7lzqV7fzxsartaX2/customFields
+     { name: "Bairro", dataType: "TEXT", placeholder: "Bairro", model: "contact" }
+-> 201  { id: "dDlZtl9xsCdQYNXov8eQ", fieldKey: "contact.bairro",
+          parentId: "OcOsCHLLFKfYrCLhn3C9", position: 1100 }
+```
 
-Depois de criar, faltam dois passos que a interface tambem exige:
+O `model` aceita `contact` e `opportunity`. **Campo de contato se cria por API
+desde que pela rota `/locations/`.**
+
+A licao nao e sobre o GHL: e que "a API nao faz X" precisa dizer *qual rota*
+respondeu isso. Duas rotas para o mesmo recurso, uma com um limite que a outra
+nao tem, e eu tratei a resposta de uma como propriedade das duas.
+
+**Onde o `Bairro` ficou:** pasta `OcOsCHLLFKfYrCLhn3C9`, a mesma de `WhatsApp`,
+`Instagram`, `Trilho` e `Canal` — nao a pasta `BBYq38L550saG72oULys` do `CPF` e
+`CNPJ`, como eu tinha planejado. Sem consequencia funcional: a chave nao depende
+da pasta. Mover pela interface se incomodar visualmente.
+
+Faltam os dois passos que a API **nao** faz:
+
 1. incluir o campo no formulario de cadastro de afiliado, senao o criador
    nunca preenche
 2. adicionar `Bairro is not empty` nas condicoes do W9 passo 4 e do W1 passo 1
+
+### Estado real das tags em 27/08/2026
+
+Lido por `GET /locations/{id}/tags`. A pendencia 11 dizia cinco por criar;
+duas ja existiam.
+
+| Tag | ID | Origem |
+|---|---|---|
+| `afil-bloqueado` | `68FYzdt5HYf8jvQvdRMH` | ja existia |
+| `afil-conteudo-combinado` | `890C8rYSVuaKhhkAdpA0` | **ja existia** — o guia dizia que nao |
+| `afil-devolvido` | `fHdg9yB72pwAgvjRSPA7` | **ja existia** — o guia dizia que nao |
+| `afil-import` | `GITCCbKTv5TKLVVmNiqY` | criada pelo teste do sync em 19/08 |
+| `afil-mundoud` | `bBM5nhlAv0X8jjmMkIUc` | ja existia |
+| `afil-nitron` | `zOR4GxgGo3vjjoq8oh9Q` | ja existia |
+| `afil-sem-email` | `UAZ9Jx4clAQjRsPHFGjR` | ja existia |
+| `afil-sem-marca` | `ASlYQszJxPqlJwPHLNvc` | ja existia |
+| `afil-teakbr` | `3M1fukkjZolef2jMyaJJ` | ja existia |
+| `afil-revendedor` | `6Uws4JSVGK55dmsUkZOa` | **criada em 27/08 pela API** |
+| `afil-cadastro-incompleto` | `7oSfRlsR2NdlDNS1bm1r` | **criada em 27/08 pela API** |
+| `afil-teste` | `y4rlO4xceFNNm9gn9XcC` | **criada em 27/08 pela API** |
+
+`POST /locations/{id}/tags` cria; devolve `400 "The tag name is already exist."`
+em duplicata, o que serve como checagem de existencia.
+
+Criar a tag **nao dispara nada**: ela e so um rotulo na lista da conta ate
+alguem aplicar em um contato. Pendencia 11 fechada.
+
+**Duas tags de teste para limpar:** `apagar-teste-cria`
+(`Slk0YUSLdfYtn3YQxI9a`) e `__teste_move__` (`rM6HUaAcpqpkD9ic2zSU`), sobras dos
+meus testes de API. `DELETE /locations/{id}/tags/{tagId}` apaga.
 
 ---
 
@@ -344,9 +396,8 @@ WhatsApp/SMS e 0 em Email. O W7 nao tocou nele.
 
 A tag **`afil-import` passou a existir** (`GITCCbKTv5TKLVVmNiqY`), criada pelo
 proprio endpoint de tags. Ou seja, o `add-tags` do GHL cria tag que nao existe
-em vez de falhar. Restam cinco por criar: `afil-devolvido`,
-`afil-conteudo-combinado`, `afil-revendedor`, `afil-cadastro-incompleto`,
-`afil-teste`.
+em vez de falhar. (Em 19/08 restavam cinco por criar; em 27/08 nao resta
+nenhuma — ver "Estado real das tags" acima.)
 
 ### O que o teste NAO cobriu
 

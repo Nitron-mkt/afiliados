@@ -464,11 +464,19 @@
   incompletos</code> faria você corrigir endereço de quem nem pode receber.
 </p>
 
-<h3>2. O campo Bairro entra no Branch 1 quando existir</h3>
+<h3>2. O Branch 1 tem quatro condições — o Bairro já existe</h3>
 <p>
-  Hoje ele não existe na sub-conta, então o Branch 1 tem três condições. Quando
-  você criar o campo, adicione <code>OR Bairro is empty</code> — vira a quarta.
-  Sem isso, a validação de endereço está incompleta e o Sankhya não emite a nota.
+  O campo foi criado em <strong>27/08/2026</strong>: <code>contact.bairro</code>,
+  tipo TEXT. Então o Branch 1 já nasce com quatro condições, não três — inclua
+  <code>OR Bairro is empty</code> junto das outras. Sem ela a validação de
+  endereço fica incompleta e o Sankhya não emite a nota.
+</p>
+<p>
+  <strong>Cuidado com a ordem de construção:</strong> o campo existe no GHL, mas
+  <em>ainda não está no formulário</em> de cadastro. Enquanto não estiver, ele
+  vem vazio para todo mundo — e <code>Bairro is empty</code> manda
+  <strong>todos</strong> os criadores para o ramo DEVOLVER. Ponha o campo no
+  formulário antes de publicar o W1, ou deixe essa quarta condição de fora até lá.
 </p>
 
 <h3>3. "Qtd amostras enviadas = atual + 1" pode não existir como opção</h3>

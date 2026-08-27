@@ -1,6 +1,7 @@
 # Workflows W0–W9 do programa de afiliados — especificação v3
 
 Arquivo de conhecimento para agente. Versão 3, 20/08/2026.
+Revisado em 27/08/2026: **P1 e P2 fechadas**, e a secção 0 corrigida.
 Substitui `ghl-workflows-w0-w9.md` (v2).
 
 Todo ID, chave e estado neste arquivo foi **lido da API do GoHighLevel**, não
@@ -22,14 +23,29 @@ sucesso sem que uma pessoa tenha clicado.
 O que a API **faz**, e é bastante: contato, tag, campo customizado,
 oportunidade, mover stage, mensagem, busca. Ver secção 3.
 
-**Campo customizado de contato também não se cria por API:**
+**Campo customizado de contato SE cria por API** — pela rota antiga. Corrigido
+em 27/08/2026; a versão anterior deste arquivo afirmava o contrário.
 
-```
-POST /custom-fields/  { objectKey: "contact", ... }
-→ 400 "Api does not support objectKey of type contact or opportunity"
-```
+| Rota | Payload | Resposta |
+|---|---|---|
+| `POST /custom-fields/` | `{ objectKey: "contact", ... }` | `400 "Api does not support objectKey of type contact or opportunity"` |
+| `POST /locations/{locationId}/customFields` | `{ name, dataType, model: "contact" }` | **`201`** |
 
-Só Custom Object e Company. Ler funciona (`GET /locations/{id}/customFields?model=contact`).
+A rota `/custom-fields/` só aceita Custom Object e Company. A rota
+`/locations/` aceita `model: "contact"` e `model: "opportunity"`. Use a segunda.
+
+O `Bairro` foi criado assim em 27/08. Ler funciona nas duas
+(`GET /locations/{id}/customFields?model=contact`).
+
+**Tag também se cria por API:** `POST /locations/{locationId}/tags` com
+`{ name }`. Duplicata devolve `400 "The tag name is already exist."`, o que
+serve como checagem. Criar a tag não dispara nada — é rótulo até ser aplicada.
+
+**Workflow continua sendo o que a API não faz.** Reconferido em 27/08 contra o
+registro completo de operações: só `GET /workflows/`,
+`POST /contacts/{id}/workflow/{id}` e `DELETE /contacts/{id}/workflow/{id}`.
+Nenhuma escrita no workflow, e — diferente do caso do campo — **nenhuma rota
+alternativa**. Não procure de novo.
 
 ---
 
@@ -93,8 +109,8 @@ Sobram na conta, e não fazem parte do programa:
 
 | # | Pendência | Bloqueia |
 |---|---|---|
-| P1 | Campo `Bairro` não existe | validação de endereço no W1 passo 1 e W9 passo 4 |
-| P2 | Cinco tags não existem | condições do W3, W4, W5, W9 |
+| ~~P1~~ | ~~Campo `Bairro` não existe~~ | **fechada 27/08**: `contact.bairro`, id `dDlZtl9xsCdQYNXov8eQ`, TEXT. Falta só entrar no formulário |
+| ~~P2~~ | ~~Cinco tags não existem~~ | **fechada 27/08**: todas as doze tags `afil-*` existem. IDs em `ghl-inventario.md` |
 | P3 | Frete não medido, comissão não travada | publicar o W7 |
 | P4 | GMV não volta do Sankhya/Shopify para o GHL | o W6 não teria o que observar |
 | P5 | `Afiliado — Ref amostra Sankhya` vazio em todos os contatos, nada preenche | rastrear custo real por afiliado |
@@ -144,7 +160,7 @@ condições no Workflow Builder e para merge field.
 | CPF | `contact.cpf` | `CM2BJoxHA7FA6yp0qn90` | TEXT |
 | WhatsApp | `contact.whatsapp` | `yAsQNjO4m5dl7lBKOs1h` | PHONE |
 | Instagram | `contact.instagram` | `goLActuA0uU3CloPUFBy` | TEXT |
-| **Bairro** | — | — | **não existe** |
+| **Bairro** | `contact.bairro` | `dDlZtl9xsCdQYNXov8eQ` | TEXT |
 | Afiliado — Kit alocado | `contact.afiliado__kit_alocado` | `XeGF0Od66n8c70ltFBrO` | TEXT |
 | Afiliado — Marca alocada | `contact.afiliado__marca_alocada` | `HaR3w2zhAA2TYjroBAMJ` | TEXT |
 | Afiliado — Trilha | `contact.afiliado__trilha` | `dj7l8lVTMAEK1SkeK6jD` | SINGLE_OPTIONS |
@@ -368,7 +384,7 @@ Porta de entrada real. Todo criador que chega a `Aceito` passa por aqui.
 
 **Passo 4, condições todas com `AND`, todas `is not empty`:**
 `contact.cpf` · `contact.whatsapp` · `Postal Code` (padrão) ·
-`Address` (padrão) · `Bairro` **quando o campo existir (P1)**
+`Address` (padrão) · `Bairro` (`contact.bairro`)
 
 - **Ramo NÃO:** `Add Contact Tag` `afil-cadastro-incompleto` · `Send Email`
   pedindo o dado que falta · `Update Opportunity` → `Respondeu` ·
@@ -483,7 +499,7 @@ A tag nos quatro ramos é a invariante I3.
 
 | # | Ação | Condição | Se falhar |
 |---|---|---|---|
-| 1 | `If/Else` dados de envio | `contact.cpf` **AND** `Address` **AND** `Postal Code` **AND** `Bairro` (P1), todos `is not empty` | DEVOLVER |
+| 1 | `If/Else` dados de envio | `contact.cpf` **AND** `Address` **AND** `Postal Code` **AND** `Bairro` (`contact.bairro`), todos `is not empty` | DEVOLVER |
 | 2 | `If/Else` bloqueado | `Contact Tag` `is` `afil-bloqueado` | SIM → DEVOLVER |
 | 3 | `If/Else` marca | `afiliado__marca_alocada` `is empty` | SIM → DEVOLVER |
 | 4 | `If/Else` kit permitido | `afiliado__kit_alocado` `contains` cada referência, com `OR` | NÃO → DEVOLVER |
