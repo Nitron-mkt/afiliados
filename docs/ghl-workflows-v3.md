@@ -334,6 +334,51 @@ O dropdown oferece oito opções. Para "nos últimos N dias" a correta é
 
 ---
 
+## 4b. A regra do builder que reordena três workflows
+
+Descoberta ao desenhar os canvas, 31/08/2026. Não estava em nenhuma versão
+anterior deste arquivo, e explica por que a ordem dos passos aqui **não** é a
+ordem em que você monta.
+
+**Ramo do GHL nunca volta para o tronco.** Cada `Branch` (e cada lado de um
+`If/Else`) segue sozinho até o fim. Não existe nó de junção.
+
+Consequência: todo passo da forma *"faça X só se Y, **depois continue**"* custa
+uma cópia de tudo o que vem depois dele. Então esses passos têm que ser os
+últimos, ou virar o problema de outra camada.
+
+Onde isso mordeu:
+
+| Workflow | O que a especificação numerava no meio | O que fazer |
+|---|---|---|
+| **W9** | passo 5, tag de marca por `If/Else` de 4 ramos | vai para o **fim**. Nada dentro do W9 lê a tag de marca, então a ordem não muda comportamento — e economiza 16 nós repetidos |
+| **W9** | passo 7, `fonte_de_captacao` vazia → `Curadoria` | **sai do workflow**. É um segundo "faça X só se Y, depois continue", e só um pode ser o último. Resolver no formulário (campo oculto com valor padrão) |
+| **W7** | passos 3 a 10, a cadência depois do roteador de trilha | a cadência mora **dentro de cada ramo** de trilha. Não custa nada: os templates já eram por trilha (A2, B2, C2) |
+
+E onde o `Condition` de vários `Branch` reduz nós, como já era o caso no W1:
+
+| Workflow | Antes | Depois |
+|---|---|---|
+| W9 | 4 `If/Else` | 2 `Condition` |
+| W4 | 2 `If/Else` | **1 `Condition`** — o workflow inteiro |
+| W6 | 2 `If/Else` | 1 `Condition` |
+
+**Em W4 e W6 a ordem dos `Branch` passa a ser a regra, não estética:**
+
+- **W4** — `afil-devolvido` tem que ser o `Branch 1`. Uma amostra extraviada de
+  quem recebeu amostra há 10 dias casa nos **dois** Branch; o GHL pega o
+  primeiro. Se a ordem inverter, acontece a Colisão 2. É a invariante I1
+  expressa como ordem de Branch.
+- **W6** — `greater than 5000` tem que ser o `Branch 1`. Na versão sequencial
+  funcionava porque o segundo `If/Else` sobrescrevia o primeiro. Numa
+  `Condition`, se `greater than 0` vier primeiro ele casa com todo mundo e o
+  ramo Ouro nunca é avaliado.
+
+Os canvas nó por nó estão em `docs/canvas-workflows.html` (os nove) e
+`docs/w1-canvas.html` (o W1).
+
+---
+
 ## 5. W0 — não construir
 
 A edge function `ghl-sync` (repositório `nitron-mkt/afiliados`,
@@ -753,6 +798,10 @@ Ao terminar, **apagar o contato de teste**. A tag `afil-teste` serve para achá-
 ---
 
 ## 9. Arquivos relacionados no repositório
+
+- `docs/canvas-workflows.html` — os nove workflows nó por nó, no formato do
+  builder, com a configuração exata de cada nó
+- `docs/w1-canvas.html` — o mesmo para o W1
 
 | Arquivo | O que tem |
 |---|---|
